@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> BAD USB </title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <body dir="rtl" style="text-align: right;">
+
+  <header>
+    <div class="container">
+      <h1>Project By : Abdallah Yasir</h1>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <h2> BAD USB Using Arduion Pro Micro </h2>
+      <p> بواسطة : عبدالله ياسر </p>
+      <div class="image-card">
+        <img src="ProjectsImg/usb2.jpg" alt="USB" class="cool-image">
+      </div>
+      
+      <p> هذه القطعة الصغيرة من الأردوينو تحاكي وظيفة BadUSB، حيث تبدأ تلقائيًا، بمجرد توصيلها بالحاسوب، بتنفيذ سلسلة من العمليات السريعة على الهدف، وتسعى إلى تنفيذ المهام التالية: </p>
+      <h3>1 - سرقة البيانات، وتشمل  : </h3>
+      <p> • رموز شبكات الواي فاي التي سبق أن اتصل بها الحاسوب. </p>
+      <p>  • عنوان الـIP العام والمحلي.  </p>
+      <p>  • الموقع التقريبي اعتمادًا على عنوان الـIP العام.  </p>
+      <p>  • نوع الجهاز والطراز.  </p>
+      <p>  • نسخة وإصدار نظام التشغيل المثبت على الجهاز.  </p>
+      <p>  • حالة الجدار الناري (مُفعّل/غير مُفعّل).  </p>
+      <p>   • تقدير عام لحالة مضاد الفيروسات ومستوى الحماية.   </p>
+      <p>    • مزود خدمة الإنترنت (ISP). </p>
+      <p> تقوم الأداة بتنفيذ هذه الأوامر بسرعة عالية، ثم ترسل البيانات مباشرة إلى بوت على تطبيق تيليغرام (يتطلب اتصال الجهاز المستهدف بالإنترنت). </p>
+      <h3> 2 - التحكم بالجهاز، وتحميل البرمجيات الخبيثة  : </h3>
+      <p> • تعطيل الجدار الناري ومضاد الفيروسات. </p>
+      <p> • تحميل برمجية خبيثة من الإنترنت وتشغيلها على الجهاز، سواء كانت: </p>
+      <p>   • Ransomware (تقوم بتشفير ملفات الحاسوب).  </p>
+      <p> • أو Spyware (تقوم بالتنصت ومراقبة الجهاز). </p>
+      <h3> 3 - فتح اتصال عكسي (Reverse Shell) : </h3>
+      <P> حيث تقوم الأداة بعد تعطيل الحماية بفتح جلسة تحكُّم عن بُعد، تسمح لجهاز المهاجم بالتحكُّم الكامل في الجهاز المستهدف. </P>
+      <p> ببساطة، تدّعي هذه القطعة أنها لوحة مفاتيح خارجية (HID Keyboard) يتم توصيلها بالحاسوب عبر منفذ USB، مما يدفع النظام إلى الوثوق بها، والاعتقاد بأن الأوامر والضغطات التي تُنفَّذ صادرة من شخص حقيقي يستخدم لوحة مفاتيح فعلية.
+
+        يتم برمجة هذه القطعة باستخدام لغة ++C عبر بيئة Arduino IDE، وذلك بالاعتماد على الدوال (methods) المقدَّمة من مكتبة Keyboard.h.
+         • نلاحظ في الصورة السابقة الحجم الصغير جدًا للقطعة مقارنة بأصابع اليد البشرية.
+         • يمكن تطوير هذه القطعة عبر إضافة منفذ USB عادي وطباعة غلاف ثلاثي الأبعاد لها، لتبدو شبيهة تمامًا بذاكرة التخزين (الفلاشات)، مما يقلل من إثارة الشك لدى الهدف، بدلاً من توصيلها عبر كابل Type-C كما هو ظاهر في الصورة. </p>
+       
+       <a href="https://t.me/xms_cipher/250" target="_blank"> تسريب البيانات   </a>
+       <p> تسجيل يُظهر التطبيق العملي لسكربت تسريب البيانات بعد توصيل القطعة بالحاسوب، ويُبرز سرعة التنفيذ، ثم إرسال البيانات التي تم جمعها إلى تطبيق تيليغرام. ( مع إمكانية تسريع السكربت لاحقًا )</p>
+       <a href="https://t.me/xms_cipher/252" target="_blank"> DataLeack Sample    </a>
+       <p>نسخة من البيانات التي بامكان القطعة ان تقوم بارسالها الى البوت</p>
+       <a href="https://t.me/xms_cipher/253" target="_blank"> Malwere   </a>
+       <p>تسجيل يُظهر قيام القطعة بتحميل برمجية تحاكي عمل برمجية خبيثة من الإنترنت، ثم تشغيلها على الجهاز 
+
+        ( البرمجية المستخدمة في التجربة لا تشكل أي خطر، وإنما تقتصر على فتح نوافذ وتكرار نصوص، وقد أُجريَت التجربة على جهازي الشخصي )</p>
+        <a href="https://t.me/xms_cipher/255" target="_blank"> Reverse Shell   </a>
+        <p>تسجيل يُظهر فتح اتصال من نظام ويندوز داخل بيئة كالي لينكس.
+ 
+            • في البداية، نلاحظ أن جدار الحماية (Firewall) مفعل.
+             
+            • كما نلاحظ أن برنامج الحماية من الفيروسات (Antivirus) قيد التشغيل.
+            
+            بعد توصيل القطعة، نلاحظ قيامها بإيقاف جدار الحماية وتعطيل حماية ويندوز، مما أتاح لجهاز كالي الوصول إلى الملفات الموجودة على سطح المكتب.
+            
+            قمت لاحقًا بتطوير نسخة أخرى من السكربت تقوم بزراعة باب خلفي (Backdoor) في النظام، وتسجيله كعملية نظام (System Process)، وقد نجحت العملية.
+            إلا أنني واجهت مشكلة في الاتصال من جهاز كالي، وسأسعى لحلها لاحقًا لجعل السكربت أقل عرضة للاكتشاف وأكثر كفاءة</p>
+            
+            <div dir="ltr" style="text-align: left;">
+            <h2>English Version</h2>
+            <p>This small Arduino device mimics BadUSB functionality. Once connected to a computer, it automatically executes a series of rapid operations on the target system, aiming to perform the following tasks:</p>
+            
+            <h3>1 - Data Theft, including:</h3>
+            <p>• Wi-Fi network passwords previously connected to the computer.</p>
+            <p>• Public and local IP addresses.</p>
+            <p>• Approximate location based on public IP address.</p>
+            <p>• Device type and model.</p>
+            <p>• Operating system version and build.</p>
+            <p>• Firewall status (enabled/disabled).</p>
+            <p>• General assessment of antivirus status and protection level.</p>
+            <p>• Internet Service Provider (ISP).</p>
+            <p>The tool executes these commands at high speed, then sends the data directly to a Telegram bot (requires the target device to have internet connection).</p>
+            
+            <h3>2 - Device Control and Malware Download:</h3>
+            <p>• Disabling firewall and antivirus.</p>
+            <p>• Downloading and executing malware from the internet, which could be:</p>
+            <p>• Ransomware (encrypts computer files).</p>
+            <p>• Or Spyware (monitors and spies on the device).</p>
+            
+            <h3>3 - Establishing Reverse Shell:</h3>
+            <p>The tool opens a remote control session after disabling protections, allowing the attacker's device full control over the target system.</p>
+            
+            <p>Simply put, this device pretends to be an external keyboard (HID Keyboard) when connected via USB, making the system trust it and believe the executed commands and keystrokes come from a real person using an actual keyboard.
+            
+            This device is programmed using C++ through Arduino IDE, utilizing methods provided by the Keyboard.h library.
+            • Note in the previous image how small the device is compared to human fingers.
+            • The device can be enhanced by adding a regular USB port and 3D printing a case to make it look exactly like a flash drive, reducing suspicion compared to connecting via Type-C cable as shown in the image.</p>
+            
+            <a href="https://t.me/xms_cipher/250" target="_blank">Data Leak</a>
+            <p>A recording demonstrating the practical application of the data theft script after connecting the device to a computer, showing the execution speed and subsequent sending of collected data to Telegram. (The script can be further optimized for faster execution)</p>
+            
+            <a href="https://t.me/xms_cipher/252" target="_blank">DataLeak Sample</a>
+            <p>A sample of the data the device can send to the bot.</p>
+            
+            <a href="https://t.me/xms_cipher/253" target="_blank">Malware</a>
+            <p>A recording showing the device downloading a program that simulates malware behavior from the internet, then executing it on the device.
+            (The program used in testing poses no actual threat and only opens windows/repeats text. Testing was conducted on my personal device)</p>
+            
+            <a href="https://t.me/xms_cipher/255" target="_blank">Reverse Shell</a>
+            <p>A recording showing connection establishment from a Windows system to a Kali Linux environment.
+            • Initially, we observe the firewall is active.
+            • We also notice the antivirus program is running.
+            After connecting the device, we observe it stopping the firewall and disabling Windows protections, allowing the Kali machine to access files on the desktop.
+            I later developed another script version that plants a backdoor in the system and registers it as a system process, which succeeded.
+            However, I encountered connection issues from the Kali machine and will work to resolve them to make the script less detectable and more efficient.</p>
+        </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; جميع الحقوق محفوظة | NTU CyberX</p>
+    </div>
+  </footer>
+</body>
+</html>

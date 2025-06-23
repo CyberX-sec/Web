@@ -1,0 +1,532 @@
+@import url('https://fonts.googleapis.com/css2?family=Almarai&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Almarai', sans-serif;
+    background-color: #000000; /* أسود */
+    color: #e0e0e0; /* أبيض فاتح */
+    direction: rtl;
+    text-align: center;
+    line-height: 1.6;
+}
+
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+header {
+    background: #191919;
+    padding: 1rem 2rem; /* زودت التبطين عشان المساحة */
+    border-bottom: 1px solid #444444;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+    direction: ltr; /* حتى اللوغو على اليسار والقائمة على اليمين */
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 100px;
+    width: auto;
+}
+
+/* خلي القائمة تتجه يمين */
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+nav a {
+    text-decoration: none;
+    color: #e0e0e0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #ffffff;
+}
+
+
+.hero {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(200, 200, 200, 0.1)), url('MainImg/main1.JPEG') no-repeat center/cover;
+    padding: 4rem 2rem;
+    position: relative;
+    color: #fff;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 0;
+}
+
+.hero .container, .hero h2, .hero p {
+    position: relative;
+    z-index: 1;
+}
+
+.hero h2 {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    color: #e0e0e0;
+    font-weight: 700;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: #c9c9c9;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.section h2 {
+    color: #e0e0e0;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+.projects, .team-grid, .articles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.project-card, .team-member, .article-card {
+    background: #111111;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover, .team-member:hover, .article-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.project-card h3, .team-member h3, .article-card h3 {
+    font-size: 1.5rem;
+    color: #e0e0e0;
+    margin: 0.5rem 0;
+    font-weight: 600;
+}
+
+.project-card p, .team-member p, .article-card p {
+    font-size: 1rem;
+    color: #c9c9c9;
+    margin-bottom: 0.5rem;
+}
+
+.team-member img {
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid #e0e0e0;
+    width: 120px;
+    height: 120px;
+}
+
+footer {
+    background: #000000;
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 1rem;
+    border-top: 1px solid #444444;
+    margin-top: 3rem;
+    color: #e0e0e0;
+}
+
+footer p {
+    margin: 0;
+}
+
+footer a {
+    color: #e0e0e0;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+    color: #ffffff;
+}
+
+.telegram-btn, .article-card .read-more-btn {
+    display: inline-block;
+    background-color: #333333;
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.telegram-btn:hover, .article-card .read-more-btn:hover {
+    background-color: #555555;
+    transform: translateY(-2px);
+}
+
+.project-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border: 2px solid #e0e0e0;
+    box-shadow: 0 0 10px rgba(224, 224, 224, 0.3);
+}
+
+.image-card {
+    background: #111111;
+    border: 2px solid #444444;
+    border-radius: 20px;
+    padding: 15px;
+    max-width: 420px;
+    margin: 30px auto;
+    box-shadow: 0 8px 16px rgba(224, 224, 224, 0.3);
+    text-align: center;
+}
+
+.cool-image {
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(224, 224, 224, 0.3);
+    transition: 0.4s ease;
+}
+
+.cool-image:hover {
+    transform: scale(1.03);
+}
+
+.caption {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #b0b0b0;
+}
+
+.card-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin: 30px auto;
+}
+
+.usb-card {
+    background: #f0f0f0;
+    border: 2px solid #ccc;
+    border-radius: 20px;
+    padding: 12px;
+    max-width: 300px;
+    box-shadow: 0 8px 16px rgba(192, 192, 192, 0.2);
+    text-align: center;
+}
+
+.usb-image {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: transparent; /* خلفية شفافة دايمًا */
+  display: flex;
+  justify-content: left; /* يركّز اللوجو في الوسط */
+  align-items: center;
+  padding: 1rem 0;
+  box-shadow: none; /* بدون ظل */
+  border-bottom: none;
+}
+
+/* إخفاء القائمة والنصوص */
+nav, header h1 {
+  display: none;
+}
+
+/* اللوجو */
+.logo {
+  height: 110px;
+  width: auto;
+  display: block;
+}
+
+
+
+body {
+  background-image: url(MainImg/background.JPEG);
+  /* background-size: 2000px;
+  background-repeat: no-repeat; */
+  background-position: top;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.bg {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  width: 200%;
+  height: 200vh;
+  background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
+  background-repeat: repeat;
+  animation: bg-animation .2s infinite;
+  opacity: 0.9;
+  visibility: visible;
+  z-index: -1;
+}
+
+@keyframes bg-animation {
+    0% { transform: translate(0,0) }
+    10% { transform: translate(-5%,-5%) }
+    20% { transform: translate(-10%,5%) }
+    30% { transform: translate(5%,-10%) }
+    40% { transform: translate(-5%,15%) }
+    50% { transform: translate(-10%,5%) }
+    60% { transform: translate(15%,0) }
+    70% { transform: translate(0,10%) }
+    80% { transform: translate(-15%,0) }
+    90% { transform: translate(10%,5%) }
+    100% { transform: translate(5%,0) }
+}
+
+:lang(en) {
+  font-family: 'Cinzel', serif;
+}
+
+#side-tab {
+  position: fixed;
+  top: 8.5%;
+  right: 0;
+  transform: translateY(-10%);
+  z-index: 1500;
+  font-family: 'Almarai', sans-serif;
+}
+
+#tab-button {
+  background: #222;
+  color: #eee;
+  padding: 1px -4rem;
+  cursor: pointer;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  user-select: none;
+  font-size: 1.5rem;
+  box-shadow: 0 0 10px #151515;
+  transition: background 0.3s;
+}
+
+#tab-button:hover {
+  background: #444;
+}
+
+#tab-menu {
+  background: #111;
+  margin-top: 0.5rem;
+  border-radius: 4px;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+  box-shadow: 0 0 15px #000;
+}
+
+#tab-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#tab-menu ul li {
+  border-bottom: 1px solid #333;
+}
+
+#tab-menu ul li:last-child {
+  border-bottom: none;
+}
+
+#tab-menu ul li a {
+  display: block;
+  padding: 0.8rem 2rem 0.8rem 1rem;
+  color: #ddd;
+  text-decoration: none;
+  font-weight: 300;
+  transition: background 0.2s;
+}
+
+#tab-menu ul li a:hover {
+  background: #333;
+  color: #fff;
+}
+
+/* عند فتح القائمة */
+#tab-menu.show {
+  max-height: 500px; /* كبير بما يكفي لعناصر القائمة */
+}
+
+#music-icon {
+  position: relative;
+  top: 10px;
+  right: 210px;
+  width: 20px;
+  height: 20px;
+  background: url('https://cdn-icons-png.flaticon.com/512/727/727245.png') no-repeat center center;
+  background-size: contain;
+  cursor: pointer;
+  z-index: 9999;
+  filter: grayscale(0.7);
+  transition: filter 0.3s ease;
+  opacity: 0.5;
+}
+#music-icon:hover {
+  filter: grayscale(0);
+}
+
+.log-terminal-window {
+  width: 800px;
+  max-width: 90%;
+  height: 350px;
+  background: #000;
+  border-radius: 10px;
+  /* box-shadow: 0 0 20px #00ff00; */
+  font-family: monospace;
+  overflow: hidden;
+  margin: 40px auto; /* إذا داخل صفحة */
+  /* border: 1px solid #00ff00; */
+  position: relative; /* أو static لو تريدها جزء من الصفحة */
+}
+
+@media (max-width: 768px) {
+  .log-terminal-window {
+    width: 95%;
+    height: 250px;
+    font-size: 12px;
+  }
+  .terminal-header .title {
+    font-size: 11px;
+  }
+}
+
+.terminal-header {
+  height: 30px;
+  background: #1a1a1a;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 8px;
+  position: relative;
+}
+
+.terminal-header .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.terminal-header .red { background: #ff5f56; }
+.terminal-header .yellow { background: #ffbd2e; }
+.terminal-header .green { background: #27c93f; }
+
+.terminal-header .title {
+  color: #aaa;
+  font-size: 13px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.terminal-body {
+  padding: 10px;
+  color: #770303;
+  height: calc(100% - 30px);
+  overflow-y: auto;
+  background: #000;
+  overflow-y: scroll; /* أو auto */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+
+.terminal-body::-webkit-scrollbar {
+  display: none;
+}
+
+.terminal-body .log-line {
+  margin-bottom: 4px;
+  white-space: pre-wrap;
+}
+
+#loader {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background-color: #181818;
+  color: #980606;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 2rem;
+  z-index: 10000;
+  transition: opacity 1s ease;
+}
+
+#loader-text {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.double-image-section {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px;
+}
+
+.double-image-section .column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.double-image-section img {
+  width: 300px; /* تقدر تعدل الحجم */
+  height: auto;
+  border-radius: 4px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+.double-image-section img:hover {
+  transform: scale(1.05);
+}
+
