@@ -14,7 +14,6 @@
   <div id="loader-text">1%</div>
 </div>
 
-<!-- محتوى الموقع -->
 <div id="page-content" style="display: none;">
 
   
@@ -22,7 +21,7 @@
 
   <header>
     <div class="logo-container">
-      <img src="MainImg/logo.PNG" alt="Logo" class="logo" />
+      <img src="../Mainimages/logo.PNG" alt="Logo" class="logo" />
     </div>
 
     <div id="side-tab">
@@ -116,7 +115,7 @@
 
   <section class="double-image-section">
   <div class="column">
-    <img src="MainImg/floating1.JPEG" alt="صورة 1">
+    <img src="../Mainimages/floating1.JPEG" alt="صورة 1">
   </div>
   </section>
 
@@ -150,55 +149,55 @@
       <h2>الفريق</h2>
       <div class="team-grid">
         <div class="team-member">
-          <img src="TeamImg/Harith2.jpg" alt="عضو 2">
+          <img src="../Team-images/Harith2.jpg" alt="عضو 2">
           <h3 lang="en" >Harith Abdulrahman</h3>
           <p> مدير التنسيق والعلاقات العامة </p>
         </div>
 
         <div class="team-member">
-          <img src="TeamImg/Abdallah.JPEG" alt="عضو 4">
+          <img src="../Team-images/Abdallah.JPEG" alt="عضو 4">
           <h3 lang="en" >Abdallah Yasir</h3>
           <p> web dev - offensive security - graphic design </p>
         </div>
 
         <div class="team-member">
-          <img src="TeamImg/n2.JPEG" alt="عضو 4">
+          <img src="../Team-images/n2.JPEG" alt="عضو 4">
           <h3 lang="en" >Elaf Mahmood </h3>
           <p> programming </p>
         </div>
 
         <div class="team-member">
-            <img src="TeamImg/n1.jpg" alt="عضو 5">
+            <img src="../Team-images/Ehab.JPEG" alt="عضو 5">
             <h3 lang="en">Ehab Thaer</h3>
             <p> Red / Blue team member - Bug hunting </p>
           </div>
 
           <div class="team-member">
-            <img src="TeamImg/Waleed.jpg" alt="عضو 6">
+            <img src="../Team-images/Waleed.jpg" alt="عضو 6">
             <h3 lang="en">Waleed Mohammad</h3>
             <p> Blue team member - programming - Network Analysis</p>
           </div>
 
           <div class="team-member">
-          <img src="TeamImg/n2.JPEG" alt="عضو 4">
+          <img src="../Team-images/n2.JPEG" alt="عضو 4">
           <h3 lang="en" >Maha Ajeel</h3>
           <p> programming - Red team  </p>
         </div>
 
           <div class="team-member">
-            <img src="TeamImg/othman.jpg" alt="عضو 8">
+            <img src="../Team-images/othman.jpg" alt="عضو 8">
             <h3 lang="en">Othman Mohammad</h3>
             <p> offensive security </p>
           </div>
 
           <div class="team-member">
-            <img src="TeamImg/mohammad.jpg" alt="عضو 9">
+            <img src="../Team-images/mohammad.jpg" alt="عضو 9">
             <h3 lang="en">Mohammad Albaroodi</h3>
             <p> Red team - OSINT </p>
           </div>
 
           <div class="team-member">
-          <img src="TeamImg/n2.JPEG" alt="عضو 4">
+          <img src="../Team-images/n2.JPEG" alt="عضو 4">
           <h3 lang="en" > Ola Omar </h3>
           <p> programming </p>
         </div>
@@ -210,10 +209,11 @@
   <section id="contact" class="section">
     <div class="container">
       <h2>تواصل معنا</h2>
-      <p lang="en" >E-mail: www.ntucyberx@gmail.com</p>
-      <p lang="en">GitHub: github.com/Cyber-X-Team</p>
+      <p lang="en" >E-mail: cyberx.un@gmail.com</p>
+      <!-- <p lang="en" >GitHub: github.com/CyberX-sec</p> -->
+      <a href="https://github.com/CyberX-sec" target="_blank" class="telegram-btn" lang="en" >Github</a>
       <a href="https://t.me/NTU_CyberX" target="_blank" class="telegram-btn" lang="en" >Telegram</a>
-      <a href="https://www.instagram.com/ntucyberx?igsh=MTJmcGRwdW5ncnN3YQ==" target="_blank" class="telegram-btn" lang="en">instagram</a>
+      <!-- <a href="" target="_blank" class="telegram-btn" lang="en">instagram</a> -->
     </div>
   </section>
 
@@ -306,14 +306,14 @@
     if (progress >= 100) {
       clearInterval(interval);
 
-      // ✨ Fade out
+      
       loader.style.opacity = 0;
 
-      // ⏳ انتظر نهاية الـ fade ثم أخفي العنصر واظهر الصفحة
+      
       setTimeout(() => {
         loader.style.display = "none";
         content.style.display = "block";
-      }, 1000); // نفس مدة transition
+      }, 1000); 
     }
   }, 30);
 </script>

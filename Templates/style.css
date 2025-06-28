@@ -3,8 +3,8 @@
 body {
     margin: 0;
     font-family: 'Almarai', sans-serif;
-    background-color: #000000; /* أسود */
-    color: #e0e0e0; /* أبيض فاتح */
+    background-color: #000000; 
+    color: #e0e0e0; 
     direction: rtl;
     text-align: center;
     line-height: 1.6;
@@ -20,14 +20,14 @@ body {
 
 header {
     background: #191919;
-    padding: 1rem 2rem; /* زودت التبطين عشان المساحة */
+    padding: 1rem 2rem; 
     border-bottom: 1px solid #444444;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 6px rgba(255, 255, 255, 0.1);
     color: #e0e0e0;
-    direction: ltr; /* حتى اللوغو على اليسار والقائمة على اليمين */
+    direction: ltr; 
 }
 
 .logo-container {
@@ -40,7 +40,7 @@ header {
     width: auto;
 }
 
-/* خلي القائمة تتجه يمين */
+
 nav ul {
     list-style: none;
     padding: 0;
@@ -65,7 +65,7 @@ nav a:hover {
 
 
 .hero {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(200, 200, 200, 0.1)), url('MainImg/main1.JPEG') no-repeat center/cover;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(200, 200, 200, 0.1)), url('../Mainimages/main1.JPEG') no-repeat center/cover;
     padding: 4rem 2rem;
     position: relative;
     color: #fff;
@@ -255,21 +255,20 @@ header {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: transparent; /* خلفية شفافة دايمًا */
+  background: transparent; 
   display: flex;
-  justify-content: left; /* يركّز اللوجو في الوسط */
+  justify-content: left; 
   align-items: center;
   padding: 1rem 0;
-  box-shadow: none; /* بدون ظل */
+  box-shadow: none; 
   border-bottom: none;
 }
 
-/* إخفاء القائمة والنصوص */
+
 nav, header h1 {
   display: none;
 }
 
-/* اللوجو */
 .logo {
   height: 110px;
   width: auto;
@@ -277,9 +276,8 @@ nav, header h1 {
 }
 
 
-
 body {
-  background-image: url(MainImg/background.JPEG);
+  background-image: url(../Mainimages/background.JPEG);
   /* background-size: 2000px;
   background-repeat: no-repeat; */
   background-position: top;
@@ -385,9 +383,8 @@ body {
   color: #fff;
 }
 
-/* عند فتح القائمة */
 #tab-menu.show {
-  max-height: 500px; /* كبير بما يكفي لعناصر القائمة */
+  max-height: 500px; 
 }
 
 #music-icon {
@@ -417,9 +414,8 @@ body {
   /* box-shadow: 0 0 20px #00ff00; */
   font-family: monospace;
   overflow: hidden;
-  margin: 40px auto; /* إذا داخل صفحة */
-  /* border: 1px solid #00ff00; */
-  position: relative; /* أو static لو تريدها جزء من الصفحة */
+  margin: 40px auto; 
+  position: relative; 
 }
 
 @media (max-width: 768px) {
@@ -467,9 +463,9 @@ body {
   height: calc(100% - 30px);
   overflow-y: auto;
   background: #000;
-  overflow-y: scroll; /* أو auto */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none;  /* IE 10+ */
+  overflow-y: scroll; 
+  scrollbar-width: none; 
+  -ms-overflow-style: none;  
 }
 
 .terminal-body::-webkit-scrollbar {
@@ -519,7 +515,7 @@ body {
 }
 
 .double-image-section img {
-  width: 300px; /* تقدر تعدل الحجم */
+  width: 300px; 
   height: auto;
   border-radius: 4px;
   box-shadow: 0 0 15px rgba(0,0,0,0.3);
