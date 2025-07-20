@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYBER X</title>
+  <link rel="stylesheet" href="../Templates/DevOps.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Almarai&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div id="loader">
+  <div id="loader-text">1%</div>
+</div>
+
+<div id="page-content" style="display: none;">
+
+  
+  <div class="bg"></div>
+
+  <header>
+    <div class="logo-container">
+      <img src="../Mainimages/logo.PNG" alt="Logo" class="logo" />
+    </div>
+
+    <div id="side-tab">
+      <div id="tab-button">☰</div>
+      <div id="tab-menu">
+        <ul>
+          <li><a href="#home"> بداية الصفحة </a></li>
+          <li><a href="../index.html">الصفحة الرئيسية</a></li>
+          <li><a href="#contact">تواصل معنا</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <section id="home" class="hero">
+    <div class="container">
+      <h2 lang="en"> DevOps Pipeline </h2>
+      <p>Project by : Abdallah Yasir - Ehab Thair - Mohammad Yonus - Waleed Mohammad </p>
+    </div>
+  </section>
+
+   <section class="section">
+    <div class="container">
+        
+      <h2> Automated Security Tests For Web Applications That Written With Python </h2>
+      
+      <div dir="rtl" style="text-align: right;">
+
+      <p>  بواسطة : عبدالله ياسر - ايهاب ثائر - محمد يونس - وليد محمد </p>
+
+       <p>في بيئة تتغير بسرعة، لم يعد يكفي أن نطور برامج تعمل؛ بل يجب أن نطورها بذكاء، وننشرها بأمان، ونحافظ على استقرارها باستمرار. من هنا، جاء هذا المشروع ليعكس جوهر منهجية DevOps، حيث يتحول العمل من مراحل منفصلة إلى دورة متصلة، يتحرك فيها الكود من الفكرة إلى الإنتاج بسلاسة.</p>
+        
+        <p>بهدف تحسين سرعة وجودة بناء البرمجيات. فبدل أن يعمل كل فريق بشكل مستقل، يعمل الجميع ضمن نظام واحد متكامل، مما يؤدي إلى:</p>
+        
+        <ul>
+          <li>تسريع عملية تطوير البرمجيات</li>
+          <li>تقليل الأخطاء والمشاكل أثناء النشر</li>
+          <li>تحسين القدرة على الاستجابة للتغييرات</li>
+          <li>تقوية أمان النظام من خلال دمج أدوات الفحص والمراقبة في كل مرحلة</li>
+        </ul>
+        
+        <p>في مشروعنا، لم نركّز على الأدوات فقط، بل على الفكر خلفها. صممنا خط تطوير ونشر متكامل (CI/CD) لا يكتفي بالتنفيذ، بل يراقب، يحلل، ويؤمّن. أدرجنا أدوات أمان مبكرة ضمن دورة التطوير (DevSecOps)، فصارت كل مرحلة نقطة دفاع، وكل خطوة مساهمة في جودة التجربة النهائية.</p>
+        
+        <h3>المرحلة الأولى: الفحص الساكن (Static Analysis)</h3>
+        <p>في المرحلة الأولى يتم فحص الكود في حالته الساكنة دون الحاجة إلى تشغيله:</p>
+        <ul>
+          <li>فحص للثغرات الشائعة في الكود</li>
+          <li>التحقق من وجود ثغرات في بعض إصدارات المكتبات</li>
+          <li>فحص تنسيق الكود وقواعد كتابته في HTML و CSS</li>
+          <li>التأكد من عدم وجود أي بيانات حساسة مكتوبة بشكل صريح مثل كلمات المرور وغيرها</li>
+        </ul>
+        
+        <p>في هذه المرحلة قمنا بتثبيت عدد من الأدوات بشكل محلي على الحاسوب كما قمنا ببرمجة كود Powershell يعمل على تشغيل هذه الأدوات دفعة واحدة بهدف تسهيل عملية الفحص على المطوّر.</p>
+        
+        <h3>الأدوات المستخدمة في هذه المرحلة هي:</h3>
+        <ul>
+          <li>Bandit</li>
+          <li>Gitleaks</li>
+          <li>Snyk</li>
+          <li>Pyright</li>
+          <li>Pylint</li>
+          <li>Flake8</li>
+        </ul>
+        
+        <p>أجرينا التجارب على تطبيق مكتوب بلغة بايثون وقد تعمدنا إدراج عدد من الثغرات بداخله بهدف التحقق من فاعلية الأدوات في كشفها.</p>
+        
+        <h3>وكانت الثغرات كما يلي:</h3>
+        <ul>
+          <li>Broken Access Control</li>
+          <li>XSS</li>
+          <li>Plaintext Password Storage</li>
+          <li>Missing CSRF Protection</li>
+          <li>Weak Session Key</li>
+          <li>No Input Validation</li>
+        </ul>
+        
+        <h3>يمكنكم الاطلاع على هذا الجزء من المشروع في:</h3>
+        <a href="https://github.com/CyberX-sec/DevOps-Local">مستودع الجزء المحلي من المشروع</a>
+        
+        <p>الجزء الثاني من هذا المشروع يتمثل بأنبوب CI/CD حيث قمنا بتعديل الكود الاساسي للتأكد من خلوه من الثغرات حتى يجتاز الفحص بعد رفعه على GitHub.</p>
+        
+        <h3>الهدف من الـ CI/CD</h3>
+        <p>يهدف الـ CI/CD إلى أتمتة جميع العمليات المتعلقة ببناء وتشغيل ونشر التطبيق، من خلال إعداد Workflow مخصص. هذا الـ Workflow مقسم إلى 6 مراحل رئيسية، بحيث يتم تشغيله تلقائيًا عند رفع الكود الخاص بالتطبيق أو موقع الويب (Push to Repository). يقوم الـ Workflow بتنفيذ جميع المهام المتبقية بشكل أوتوماتيكي بدون تدخل يدوي.</p>
+        
+        <h3>1. الفحص الأمني (Security Check)</h3>
+        <p>في هذه المرحلة يتم فحص الكود المصدري للتطبيق بحثًا عن الثغرات الأمنية باستخدام أدوات SAST (Static Application Security Testing). الأدوات المستخدمة:</p>
+        <ul>
+          <li>Bandit: أداة لتحليل كود Python فقط وكشف الثغرات الشائعة</li>
+          <li>Gitleaks: لاستخراج أي أسرار أو رموز حساسة مثل كلمات المرور وTokens المخزنة بالخطأ داخل الكود</li>
+          <li>Semgrep: أداة تحليل قوية تدعم عدة لغات، تشبه Bandit لكنها أوسع وأشمل</li>
+          <li>Black: أداة لتنسيق كود Python بشكل قياسي، لضمان توحيد النمط</li>
+        </ul>
+        
+        <p>إضافة إلى هذه الأدوات، يتم استخدام أدوات GitHub المدمجة مثل:</p>
+        <ul>
+          <li>Dependabot: يفحص ملفات requirements.txt أو package.json للتحقق من إصدارات المكتبات ويُنبّه حول أي ثغرات معروفة (CVEs)</li>
+          <li>CodeQL: أداة SAST متقدمة مقدمة من GitHub لفحص الكود البرمجي</li>
+          <li>Secret Scanner: لاكتشاف الأسرار مثل كلمات المرور ومفاتيح API تمامًا مثل Gitleaks</li>
+        </ul>
+        
+        <p>بعد تشغيل الفحص، يتم توليد تقارير لكل أداة. هناك شرط (Condition) داخل الـ Workflow يتجاهل النتائج التي تكون Info أو Warnings أو Low Risk، ويركّز فقط على الثغرات High أو Critical. في حال تم اكتشاف أي ثغرة خطيرة، يتم إيقاف الـ Workflow تلقائيًا قبل الدخول في المراحل التالية.</p>
+        
+        <p>كما تم ربط الـ Workflow مع بوت على Telegram لإرسال إشعارات في حال نجاح أو فشل الفحص، بهدف مراقبة ما يحدث لحظة بلحظة.</p>
+        
+        <h3>2. البناء والرفع (Build and Push)</h3>
+        <p>في هذه المرحلة، يتم بناء التطبيق داخل Docker Image:</p>
+        <ol>
+          <li>أولًا، يتم تسجيل الدخول إلى Docker Hub</li>
+          <li>ثم يُبنى التطبيق داخل صورة Docker</li>
+          <li>بعد نجاح البناء، يتم رفع (Push) الصورة إلى الريجستري (Docker Hub)</li>
+        </ol>
+        
+        <h3>3. فحص Dockle (Dockle Scan)</h3>
+        <p>يتم فحص صورة Docker باستخدام أداة Dockle:</p>
+        <ul>
+          <li>تكشف عن أي إعدادات خاطئة، مشاكل في Permissions، أو ثغرات أمنية داخل الصورة</li>
+          <li>ُولد تقرير شامل ليتم مراجعته يدويًا لاحقًا</li>
+        </ul>
+        
+        <h3>4. النشر على بيئة الاختبار (Deploy to Staging)</h3>
+        <p>بعد التأكد من سلامة صورة Docker، يتم نشر التطبيق على بيئة Staging (بيئة شبه وهمية مخصصة للاختبار). هذه الخطوة ليست فقط لاختبار التطبيق، بل تُعتبر أيضًا طبقة إضافية من الأمان قبل النشر النهائي.</p>
+        
+        <h3>5. فحص الويب أثناء التشغيل (Web Scanner - Runtime Scanning)</h3>
+        <p>في هذه المرحلة يتم فحص التطبيق وهو يعمل (Runtime Scan) باستخدام أدوات مثل:</p>
+        <ul>
+          <li>Nikto: لفحص التطبيق على مستوى الويب واكتشاف ثغرات مثل XSS، Headers غير آمنة، وغيرها</li>
+        </ul>
+        
+        <p>إذا اجتاز التطبيق هذا الفحص بنجاح ولم تظهر أي مشاكل، ننتقل إلى المرحلة الأخيرة.</p>
+        
+        <h3>6. النشر النهائي (Deploy to Production)</h3>
+        <p>يتم نشر التطبيق على بيئة Production ليكون متاحًا للمستخدمين النهائيين.</p>
+        
+        <h3>يمكنكم الاطلاع على هذا الجزء من المشروع في:</h3>
+        <a href="https://github.com/CyberX-sec/DevSecOps-WebApplication">مستودع خط الأنابيب الكامل CI/CD</a>
+    </div>
+
+    
+
+            
+            <div dir="ltr" style="text-align: left;">
+            <h2>English Version</h2>
+            <p>In a fast-changing environment, it's no longer enough to simply develop functioning software; we must develop it smartly, deploy it securely, and continuously maintain its stability. This project embodies the essence of the DevOps methodology, where work transitions from isolated stages into a continuous cycle—moving code from idea to production seamlessly.</p>
+        <p>The goal is to enhance both the speed and quality of software development. Rather than having teams work independently, all collaborators function within one integrated system, which leads to:</p>
+        <ul>
+          <li>Faster software development</li>
+          <li>Fewer deployment errors</li>
+          <li>Improved adaptability to change</li>
+          <li>Stronger system security through integrated scanning and monitoring tools at every stage</li>
+        </ul>
+        <p>In our project, we focused not only on tools but on the mindset behind them. We built a complete CI/CD pipeline that doesn't just execute but monitors, analyzes, and secures. We integrated security tools early in the development cycle (DevSecOps), making each stage a defensive layer and every step a contribution to the final experience quality.</p>
+        <p><strong>Phase 1:</strong> Static analysis is performed without running the code. This includes vulnerability scans, library version checks, HTML/CSS formatting validation, and detection of hardcoded sensitive data like passwords.</p>
+        <p>We locally installed multiple tools and created a PowerShell script to run them all together to simplify the process for developers.</p>
+        <h3>Tools Used:</h3>
+        <ul>
+          <li>Bandit</li>
+          <li>Gitleaks</li>
+          <li>Snyk</li>
+          <li>Pyright</li>
+          <li>Pylint</li>
+          <li>Flake8</li>
+        </ul>
+        <p>We tested the tools on a vulnerable Python app to validate their effectiveness. The vulnerabilities included:</p>
+        <ul>
+          <li>Broken Access Control</li>
+          <li>XSS</li>
+          <li>Plaintext Password Storage</li>
+          <li>Missing CSRF Protection</li>
+          <li>Weak Session Key</li>
+          <li>No Input Validation</li>
+        </ul>
+        <h3>Repository:</h3>
+        <a href="https://github.com/CyberX-sec/DevOps-Local">DevOps Local Part</a>
+
+        <p>The second part of the project is a CI/CD pipeline. We modified the code to be vulnerability-free before pushing it to GitHub so it can pass the automated checks.</p>
+
+        <h3>CI/CD Goals:</h3>
+        <p>To automate the build, run, and deployment of the app using a 6-stage workflow triggered upon code push:</p>
+
+        <h3>1. Security Check</h3>
+        <p>Performs SAST using:</p>
+        <ul>
+          <li>Bandit: Python vulnerability scanner</li>
+          <li>Gitleaks: Detects secrets and tokens in code</li>
+          <li>Semgrep: Multi-language SAST tool</li>
+          <li>Black: Python code formatter</li>
+        </ul>
+
+        <p>Also uses GitHub-native tools:</p>
+        <ul>
+          <li>Dependabot: Scans dependencies for known CVEs</li>
+          <li>CodeQL: GitHub's advanced code analysis tool</li>
+          <li>Secret Scanner: Finds credentials like Gitleaks</li>
+        </ul>
+
+        <p>Reports are generated for each tool. The workflow filters out low-risk findings and halts if critical/high vulnerabilities are detected. It’s also integrated with a Telegram bot for real-time notifications.</p>
+
+        <h3>2. Build and Push</h3>
+        <p>Logs in to Docker Hub, builds the app image, and pushes it to the registry. An additional security scan is done next.</p>
+
+        <h3>3. Dockle Scan</h3>
+        <p>Scans Docker image for misconfigurations, permission issues, and embedded vulnerabilities.</p>
+
+        <h3>4. Deploy to Staging</h3>
+        <p>The image is deployed to a testing environment (staging) to ensure stability before public release.</p>
+
+        <h3>5. Web Scanner (Runtime Scanning)</h3>
+        <p>Scans the live app using tools like Nikto to detect web-based vulnerabilities like XSS, unsafe headers, etc.</p>
+
+        <h3>6. Deploy to Production</h3>
+        <p>The secure app is deployed for end users.</p>
+
+        <h3>Repository:</h3>
+        <a href="https://github.com/CyberX-sec/DevSecOps-WebApplication">DevOps Full Pipeline CI/CD</a>
+            
+        </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section">
+    <div class="container">
+      <h2>تواصل معنا</h2>
+      <p lang="en" >E-mail: cyberx.un@gmail.com</p>
+      <!-- <p lang="en" >GitHub: github.com/CyberX-sec</p> -->
+      <a href="https://github.com/CyberX-sec" target="_blank" class="telegram-btn" lang="en" >Github</a>
+      <a href="https://t.me/NTU_CyberX" target="_blank" class="telegram-btn" lang="en" >Telegram</a>
+      <!-- <a href="" target="_blank" class="telegram-btn" lang="en">instagram</a> -->
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p> All rights reserved exclusively by Cyber X &copy;</p>
+      <h6 lang="en">Van De Cipher</h6>
+    </div>
+  </footer>
+</div>
+  <script>
+    const tabButton = document.getElementById('tab-button');
+    const tabMenu = document.getElementById('tab-menu');
+
+    tabButton.addEventListener('click', () => {
+      tabMenu.classList.toggle('show');
+    });
+  </script>
+
+  <script>
+  let progress = 1;
+  const loaderText = document.getElementById("loader-text");
+  const loader = document.getElementById("loader");
+  const content = document.getElementById("page-content");
+
+  const interval = setInterval(() => {
+    progress++;
+    loaderText.textContent = progress + "%";
+
+    if (progress >= 100) {
+      clearInterval(interval);
+
+      
+      loader.style.opacity = 0;
+
+      
+      setTimeout(() => {
+        loader.style.display = "none";
+        content.style.display = "block";
+      }, 1000); 
+    }
+  }, 5);
+</script>
+
+
+</body>
+</html>
