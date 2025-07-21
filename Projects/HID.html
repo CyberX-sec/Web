@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYBER X</title>
+  <link rel="stylesheet" href="../Templates/HID.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Almarai&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div id="loader">
+  <div id="loader-text">1%</div>
+</div>
+
+<div id="page-content" style="display: none;">
+
+  
+  <div class="bg"></div>
+
+  <header>
+    <div class="logo-container">
+      <img src="../Mainimages/logo.PNG" alt="Logo" class="logo" />
+    </div>
+
+    <div id="side-tab">
+      <div id="tab-button">☰</div>
+      <div id="tab-menu">
+        <ul>
+          <li><a href="#home"> بداية الصفحة </a></li>
+          <li><a href="../index.html">الصفحة الرئيسية</a></li>
+          <li><a href="#contact">تواصل معنا</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <section id="home" class="hero">
+    <div class="container">
+      <h2 lang="en"> Sentinel-HID v1</h2>
+      <p>Project by : Ehab thaer</p>
+    </div>
+  </section>
+
+   <section class="section">
+    <div class="container">
+        
+      <div dir="rtl" style="text-align: right;">
+  <p>بواسطة : ايهاب ثائر</p>
+
+  <h3>ما هو Sentinel - HID؟</h3>
+  <p>
+    Sentinel-HID هو نظام بسيط وفعّال يهدف إلى رصد الأجهزة التي تُعرّف نفسها كأجهزة إدخال (مثل الكيبورد أو الماوس) عند توصيلها بالحاسوب عبر USB.
+    الهدف الأساسي هو التقليل من خطر هجمات BadUSB، التي تعتمد على أجهزة ظاهرها طبيعي لكن تُبرمج على تنفيذ أوامر ضارة فور توصيلها.
+  </p>
+
+  <h3>ما هي مشكلة BadUSB؟</h3>
+  <ul>
+    <li>بعض أجهزة HID مثل لوحات المفاتيح المبرمجة، يمكن برمجتها لتنفيذ أوامر خبيثة بسرعة عند توصيلها.</li>
+    <li>هذه الأجهزة غالبًا لا تحتوي على ملفات، لذا لا يتم رصدها من مضادات الفيروسات.</li>
+    <li>يتم التعرف عليها من النظام كـ HID عادي، مما يصعب التمييز بينها وبين الكيبورد الحقيقي.</li>
+  </ul>
+
+  <h3>ماذا يفعل Sentinel-HID؟</h3>
+  <p>يراقب أجهزة USB الموصولة ويركز على نوع HID بالتحديد، حيث يقوم بالآتي:</p>
+  <ul>
+    <li>التحقق من كون الجهاز موثوق (من خلال whitelist).</li>
+    <li>مراقبة سرعة ضغط المفاتيح (Keystroke Rate).</li>
+    <li>إذا كانت السرعة مريبة، يتم فصل الجهاز فورًا باستخدام udev.</li>
+    <li>تسجيل ضغطات المفاتيح القادمة من الجهاز.</li>
+    <li>تسجيل كل أحداث الجهاز في Log مستقل.</li>
+    <li>إرسال تنبيه فوري عبر Telegram عند رصد نشاط مريب.</li>
+  </ul>
+
+  <h3>ما الذي يتم تسجيله؟</h3>
+  <ul>
+    <li><strong>Keylogger File:</strong> يسجل ضغطات المفاتيح عند النشاط غير الطبيعي.</li>
+    <li><strong>Activity Log File:</strong> يسجل الأحداث التالية:
+      <ul>
+        <li>وقت التوصيل</li>
+        <li>نوع الجهاز</li>
+        <li>Vendor ID و Product ID</li>
+        <li>تم السماح أو الحظر</li>
+        <li>سرعة الكتابة</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>المميزات باختصار</h3>
+  <ul>
+    <li>يعمل بدون واجهة رسومية</li>
+    <li>قواعد whitelist مرنة</li>
+    <li>تسجيل شامل للأحداث</li>
+    <li>تنبيهات Telegram فورية</li>
+    <li>لا يعتمد على أدوات خارجية</li>
+    <li>قابل للدمج مع أنظمة حماية أخرى</li>
+  </ul>
+
+  <h3>متى يكون مفيدًا؟</h3>
+  <ul>
+    <li>في الحواسيب الإدارية أو بيئات المختبر</li>
+    <li>في أنظمة Linux التي تفتقر للحماية الطرفية</li>
+    <li>لكشف وتوثيق التوصيلات المشبوهة</li>
+  </ul>
+</div>
+
+<div dir="ltr" style="text-align: left;">
+  <h2>English Version</h2>
+
+  <h3>What is Sentinel-HID?</h3>
+  <p>
+    Sentinel-HID is a lightweight and effective system designed to detect devices that identify themselves as Human Interface Devices (like keyboards or mice) when connected via USB.
+    The goal is to minimize the risk of BadUSB attacks, where seemingly normal devices execute malicious commands.
+  </p>
+
+  <h3>What’s the problem with BadUSB?</h3>
+  <ul>
+    <li>Some HID devices, like programmable keyboards, can be configured to run malicious scripts instantly after being plugged in.</li>
+    <li>They don’t usually contain files, so antivirus software can’t detect them.</li>
+    <li>The system sees them as regular keyboards, making them hard to distinguish from real ones.</li>
+  </ul>
+
+  <h3>What does Sentinel-HID do?</h3>
+  <p>It monitors USB devices connected to the system and focuses on HID types. Main actions include:</p>
+  <ul>
+    <li>Checking whether the device is trusted (using a whitelist).</li>
+    <li>Monitoring keystroke speed.</li>
+    <li>If the speed is suspicious (e.g., over 12 keys/sec), the device is disconnected using system-level tools (udev).</li>
+    <li>Keylogging activity from the suspicious device.</li>
+    <li>Logging all events related to the device in a separate log file.</li>
+    <li>Sending a Telegram alert if suspicious activity is detected.</li>
+  </ul>
+
+  <h3>What gets logged?</h3>
+  <ul>
+    <li><strong>Keylogger File:</strong> Records only when unusual typing speed is detected.</li>
+    <li><strong>Activity Log File:</strong> Includes:
+      <ul>
+        <li>Connection timestamp</li>
+        <li>Device type</li>
+        <li>Vendor ID & Product ID</li>
+        <li>Whether it was allowed or blocked</li>
+        <li>Keystroke speed if monitoring was active</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>Key Features</h3>
+  <ul>
+    <li>Works without GUI (ideal for servers/headless systems)</li>
+    <li>Flexible whitelist rules</li>
+    <li>Detailed event logging</li>
+    <li>Telegram instant alerts</li>
+    <li>No complex external tools required – just Python on Linux</li>
+    <li>Easily integrable with other security systems</li>
+  </ul>
+
+  <h3>When is it useful?</h3>
+  <ul>
+    <li>In environments with strict control over connected devices</li>
+    <li>On Linux systems without advanced endpoint protection</li>
+    <li>As a lightweight way to detect and document suspicious USB activity</li>
+  </ul>
+
+</div>
+        
+    </div>
+  </section>
+
+  <section id="contact" class="section">
+    <div class="container">
+      <h2>تواصل معنا</h2>
+      <p lang="en" >E-mail: cyberx.un@gmail.com</p>
+      <!-- <p lang="en" >GitHub: github.com/CyberX-sec</p> -->
+      <a href="https://github.com/CyberX-sec" target="_blank" class="telegram-btn" lang="en" >Github</a>
+      <a href="https://t.me/NTU_CyberX" target="_blank" class="telegram-btn" lang="en" >Telegram</a>
+      <!-- <a href="" target="_blank" class="telegram-btn" lang="en">instagram</a> -->
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p> All rights reserved exclusively by Cyber X &copy;</p>
+      <h6 lang="en">Van De Cipher</h6>
+    </div>
+  </footer>
+</div>
+  <script>
+    const tabButton = document.getElementById('tab-button');
+    const tabMenu = document.getElementById('tab-menu');
+
+    tabButton.addEventListener('click', () => {
+      tabMenu.classList.toggle('show');
+    });
+  </script>
+
+  <script>
+  let progress = 1;
+  const loaderText = document.getElementById("loader-text");
+  const loader = document.getElementById("loader");
+  const content = document.getElementById("page-content");
+
+  const interval = setInterval(() => {
+    progress++;
+    loaderText.textContent = progress + "%";
+
+    if (progress >= 100) {
+      clearInterval(interval);
+
+      
+      loader.style.opacity = 0;
+
+      
+      setTimeout(() => {
+        loader.style.display = "none";
+        content.style.display = "block";
+      }, 1000); 
+    }
+  }, 5);
+</script>
+
+
+</body>
+</html>
