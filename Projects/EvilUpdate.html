@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYBER X</title>
+  <link rel="stylesheet" href="../Templates/EvilUpdate.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Almarai&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div id="loader">
+  <div id="loader-text">1%</div>
+</div>
+
+<div id="page-content" style="display: none;">
+
+  
+  <div class="bg"></div>
+
+  <header>
+    <div class="logo-container">
+      <img src="../Mainimages/logo.PNG" alt="Logo" class="logo" />
+    </div>
+
+    <div id="side-tab">
+      <div id="tab-button">☰</div>
+      <div id="tab-menu">
+        <ul>
+          <li><a href="#home"> بداية الصفحة </a></li>
+          <li><a href="../index.html">الصفحة الرئيسية</a></li>
+          <li><a href="#contact">تواصل معنا</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <section id="home" class="hero">
+    <div class="container">
+      <h2 lang="en"> Evil - Update </h2>
+      <p> Project by : Elaf Mahmood - Maha Ajeel - Ola Omar </p>
+    </div>
+  </section>
+
+<section class="section">
+  <div class="container">
+
+    <div dir="rtl" style="text-align: right;">
+
+      <h4> بواسطة : ايلاف محمود - مها عجيل - علا عمر </h4>
+
+      <p>
+        بالنسبة للمستخدم العادي، قد تبدو كلمة مرور Wi-Fi بسيطة وغير مهمة. ولكن بالنسبة للهاكر أو مختبر الاختراق، فهي قصة مختلفة تمامًا.  
+        تلك الكلمة هي خط الدفاع الأول لحماية بياناتك من التعرض للتجسس أو الاختراق.
+      </p>
+
+      <p>
+        الفكرة بسيطة: نستخدم لوحين، كل واحد له دور مختلف.  
+        اللوح الأول يرسل إطارات Deauthentication لفصل الأجهزة عن الشبكة الأصلية.  
+        اللوح الثاني يقوم باستنساخ اسم الشبكة (SSID) وإنشاء نقطة وصول مزيفة.
+      </p>
+
+      <p>
+        عندما يحاول المستخدم العادي إعادة الاتصال بشبكته ويفشل، سيرى شبكة أخرى بنفس الاسم ويفترض أنها مجرد خلل.  
+        وبدون أن يدرك أنه يتعرض لهجوم، يتصل بالشبكة المزيفة.  
+        فور الاتصال، يتم إعادة توجيه هاتفه على صفحة تسجيل دخول مزيفة تشبه واجهة راوتر TP-Link، لكنها تطلب "إدخال كلمة مرور الراوتر لتثبيت تحديث".
+      </p>
+
+      <p>
+        هنا يبدأ دور الهندسة الاجتماعية.  
+        إذا لم يكن لدى المستخدم وعي كافي بالأمن السيبراني، سيدخل كلمة المرور ظناً منه أنها تحديث روتيني.  
+        بمجرد التقاط الكلمة وتخزينها على اللوح، ينتهي الهجوم.  
+        يتوقف هجوم Deauthentication، وتختفي نقطة الوصول المزيفة، ويعود كل شيء إلى طبيعته كأن التحديث تم تثبيته وإعادة تشغيل الراوتر.
+      </p>
+
+      <p>
+        ما يجعل هذه الطريقة فعالة هو أنها خفية جدًا.  
+        الألواح صغيرة، يمكن التحكم بها عبر الهاتف الذكي، وتعمل ببطارية أو بنك طاقة، ويمكن إخفاؤها بسهولة في الجيب.  
+        لا حركات مريبة، لا أسلاك، فقط عملية هادئة وسلسة.
+      </p>
+
+      <hr>
+
+      <h3>تفاصيل القسم الأول: هجوم Deauthentication باستخدام ESP32</h3>
+
+      <p>
+        هذا المشروع مقسم إلى قسمين. القسم الأول هو قطعة ESP32 تقوم بهجوم Deauthentication، الذي يتم عبر 5 خطوات:
+      </p>
+
+      <h4>المقدمة:</h4>
+      <p>
+        في البداية علينا أن نعلم بأن هجوم Deauthentication هو نوع من هجمات Denial of Service (DoS) ينفذ على شبكات الواي فاي من خلال إرسال فريمات Deauth مزيفة إلى الأجهزة أو نقطة الوصول، مما يؤدي إلى قطع الاتصال بينهما.  
+        يستغل هذا الهجوم ثغرة معينة في بروتوكول 802.11 حيث لا توجد آلية تحقق من صحة فريمات التحكم.
+      </p>
+
+      <h4>الخطوة الأولى: الاتصال بالقطعة وتجهيز البيئة</h4>
+      <p>
+        عند تشغيل القطعة يتم تهيئة واجهة الواي فاي في وضع monitor أو promiscuous حسب الدعم البرمجي، مما يسمح للقطعة بإرسال واستقبال جميع الفريمات على القناة المحددة، وليس فقط الفريمات الموجهة لها.  
+        تمت برمجة القطعة باستخدام Arduino IDE، ورفعت كملف لتعريف دوال deauth والمتغيرات الخاصة بالهجوم.
+      </p>
+
+      <h4>الخطوة الثانية: آلية تكوين فريم Deauthentication</h4>
+      <p>
+        فريم Deauth هو فريم يتم إرساله لقطع الاتصال بين الأجهزة ونقطة الوصول. بنيته الأساسية تشمل:  
+      </p>
+      <ul>
+        <li>Frame Control: هو الحقل الأول من كل فريم ويحدد نوعه (تحكم، إداري، بيانات).</li>
+        <li>Duration: يحدد مدة حجز القناة، عادةً يكون 0 في فريم Deauth.</li>
+        <li>Receiver Address: عنوان MAC للجهاز المستقبل.</li>
+        <li>Transmitter Address: عنوان MAC للجهاز المرسل.</li>
+        <li>BSSID: عنوان MAC لنقطة الوصول.</li>
+        <li>Reason Code: سبب قطع الاتصال.</li>
+      </ul>
+      <p>
+        يتم بناء الفريم برمجياً كمصفوفة بايتات (RAW BUFFER) تحتوي الحقول السابقة، مع تعيين عنوان MAC للضحية أو نقطة الوصول حسب الهدف، مع إمكانية تغيير كود السبب حسب الحاجة.
+      </p>
+
+      <h4>الخطوة الثالثة: إرسال الفريمات عبر ESP32</h4>
+      <p>
+        يستدعي الكود دالة مخصصة أو مكتبات خارجية لإرسال الفريمات الخام مباشرة على الهواء بتردد معين، ويُكرر الإرسال بكثافة لضمان وصولها رغم التشويش أو ازدحام الشبكة.
+      </p>
+
+      <h4>الخطوة الرابعة: تفاعل الشبكة أثناء الهجوم</h4>
+      <p>
+        تبدأ الأجهزة في قطع الاتصال فور استلام فريمات Deauth وتظهر رسائل قطع أو محاولة إعادة الاتصال.  
+        بعض الأجهزة تعيد الاتصال تلقائياً، لذلك يجب استمرار الهجوم حتى تحقيق الهدف.
+      </p>
+
+      <h4>الخطوة الخامسة: إيقاف الهجوم</h4>
+      <p>
+        عند استدعاء الدالة stop_Deauth() يتوقف إرسال الفريمات ويعود ESP32 إلى وضعه الطبيعي أو ينتقل لوظيفة أخرى.
+      </p>
+
+      <h4>القسم الثاني: نقطة الوصول المزيفة</h4>
+      <p>
+        بعد فصل الأجهزة عن الشبكة الأصلية بواسطة القطعة الأولى، تبدأ القطعة الثانية ببث نقطة وصول مزيفة بنفس اسم الشبكة الحقيقية.  
+        يحصل أي جهاز يحاول الاتصال على عنوان IP تلقائياً عبر DHCP، ويتم اعتراض أي طلب موقع وتحويله إجباريًا عبر DNS إلى صفحة تسجيل دخول وهمية تشبه واجهة راوتر TP-Link.
+      </p>
+
+      <p>
+        أي كلمة مرور تُدخل من قبل الضحية تُلتقط وتُخزن في خادم HTTP داخل ESP32.  
+        يمكن للمهاجم الوصول إلى لوحة تحكم سرية محمية بكود خاص (يعمل مرتين فقط).  
+        عند تغيير اسم الشبكة، يتم الخروج من لوحة التحكم إجباريًا.  
+        يمكن من خلال لوحة التحكم عرض كلمات المرور، تغيير اسم الشبكة، وإدارة العملية بالكامل.
+      </p>
+
+      <p> بعد الانتهاء من قراءة شرح المشروع يمكنكم مشاهدة الفيديوهات التالية التي تعرض تطبيقا مسجلا للعملية : </p>
+
+    </div>
+
+    <div class="video-container">
+    <iframe width="560" 
+    height="315"
+     src="https://www.youtube.com/embed/JIhkVcbxg1c?si=QjkXSIu-klLEnfUy" 
+     title="YouTube video player" 
+     frameborder="0" 
+     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+       allowfullscreen></iframe>
+    </div>
+
+    <div class="video-container">
+    <iframe width="560" 
+    height="315"
+     src="https://www.youtube.com/embed/1xEN9LVkTa4?si=pqtBOBDANUlhoQz_" 
+     title="YouTube video player" 
+     frameborder="0" 
+     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+       allowfullscreen></iframe>
+    </div>
+
+    <div dir="ltr" style="text-align: left; margin-top: 3rem;">
+
+      <p>
+        To the average user, a Wi-Fi password might seem like a simple, unimportant thing. But for a hacker or penetration tester, it's a completely different story.  
+        That password is the first line of defense against having your data exposed or spied on.
+      </p>
+
+      <p>
+        The concept is simple: we use two boards, each with a different role.  
+        The first board sends deauthentication frames to disconnect devices from the original network.  
+        Meanwhile, the second board clones the network's SSID and creates a fake access point.
+      </p>
+
+      <p>
+        When the average user tries to reconnect to their network and fails, they'll see another network with the same name and likely assume it's just a glitch.  
+        Without realizing it's an attack, they connect to the fake network.  
+        Instantly, their phone is redirected to a fake login page designed to look like a TP-Link router interface. But instead of asking for a username and password, the page says: "Enter the router password to install an update."
+      </p>
+
+      <p>
+        This is where social engineering comes into play.  
+        If the user doesn't have enough cybersecurity awareness, they'll likely enter the password, thinking it's a routine update.  
+        Once the password is captured and stored on the board, the operation ends. The deauthentication attack stops. The fake access point disappears. Everything returns to normal — as if the update was successfully installed and the router rebooted.
+      </p>
+
+      <p>
+        What makes this method so effective is its stealth.  
+        The boards are small, can be controlled via smartphone, and powered by a battery or power bank, easily hidden in a pocket.  
+        No suspicious movements. No wires. Just a quiet, seamless operation.
+      </p>
+
+      <hr>
+
+      <p>
+        This project is divided into two parts. The first part involves an ESP32 board that performs a Deauthentication Attack, which proceeds through 5 steps:
+      </p>
+
+      <h4>Introduction:</h4>
+      <p>
+        First, we must understand that a Deauthentication Attack is a type of Denial of Service (DoS) attack executed on Wi-Fi networks by sending fake Deauthentication frames to either the access point or connected devices. This causes the connection to be interrupted.  
+        This attack exploits a specific vulnerability in the 802.11 protocol, which lacks a verification mechanism for control frames.
+      </p>
+
+      <h4>Step One: Connecting to the Board & Preparing the Environment</h4>
+      <p>
+        When the ESP32 board is powered on, the Wi-Fi interface is initialized in monitor mode or promiscuous mode, depending on the library and software support.  
+        This allows the board to send and receive all frames on the selected channel, not just those directed at it.  
+        The board is programmed using Arduino IDE, and the attack logic is uploaded as a file that defines the deauth functions and required variables.
+      </p>
+
+      <h4>Step Two: Constructing the Deauthentication Frame</h4>
+      <p>
+        The Deauth frame is sent to cut the connection between a device and the access point. Its basic structure includes:
+      </p>
+      <ul>
+        <li>Frame Control: The first field in any Wi-Fi frame. It identifies whether the frame is for control, management, or data.</li>
+        <li>Duration: A field that determines the duration of channel reservation. It is usually 0 in Deauth frames.</li>
+        <li>Receiver Address: The MAC address of the frame's recipient.</li>
+        <li>Transmitter Address: The MAC address of the frame's sender.</li>
+        <li>BSSID: Usually the MAC address of the access point.</li>
+        <li>Reason Code: Explains why the disconnection happened.</li>
+      </ul>
+      <p>
+        The frame is constructed in code as a byte array (RAW BUFFER) containing the above fields. The victim’s or AP’s MAC address is inserted accordingly. The reason code can also be modified as needed.
+      </p>
+
+      <h4>Step Three: Sending Frames via ESP32</h4>
+      <p>
+        The code either calls a custom function or uses external libraries to send raw frames directly into the air at a certain frequency.  
+        These frames are sent repeatedly to ensure delivery, as some may get lost due to interference or network congestion.
+      </p>
+
+      <h4>Step Four: Network Behavior During the Attack</h4>
+      <p>
+        Once the Deauth frames are sent, devices begin disconnecting immediately and show messages like “Disconnect” or “Reconnecting to network.”  
+        Some smart devices may attempt to automatically reconnect, so the attack must continue until the goal is achieved.
+      </p>
+
+      <h4>Step Five: Stopping the Attack</h4>
+      <p>
+        When stop_Deauth() is called in the code, the loop or timer responsible for sending frames is halted.  
+        The ESP32 either returns to normal mode or switches to another function.
+      </p>
+
+      <h4>The Second Part of the Project – Fake Access Point</h4>
+      <p>
+        After devices are disconnected from the original network using the first ESP32, the second ESP32 board begins broadcasting a fake access point with the same SSID as the real network.  
+        Any device trying to reconnect will receive an IP address automatically via DHCP, and any web request is intercepted and forcibly redirected using DNS spoofing to a fake TP-Link-like login page.
+      </p>
+
+      <p>
+        From this point, any password entered by the victim is captured and stored in an internal HTTP server inside the ESP32.  
+        Only the attacker can access a secret control panel via a hidden button, protected with a special access code (works only twice).  
+        When the SSID is changed, the admin panel becomes inaccessible automatically.  
+        From this panel, the attacker can view all captured passwords, change the SSID of the fake access point, and manage the entire operation.
+      </p>
+
+    </div>
+  </div>
+</section>
+
+
+
+  <section id="contact" class="section">
+    <div class="container">
+      <h2>تواصل معنا</h2>
+      <p lang="en" >E-mail: cyberx.un@gmail.com</p>
+      <!-- <p lang="en" >GitHub: github.com/CyberX-sec</p> -->
+      <a href="https://github.com/CyberX-sec" target="_blank" class="telegram-btn" lang="en" >Github</a>
+      <a href="https://t.me/NTU_CyberX" target="_blank" class="telegram-btn" lang="en" >Telegram</a>
+      <!-- <a href="" target="_blank" class="telegram-btn" lang="en">instagram</a> -->
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p> All rights reserved exclusively by Cyber X &copy;</p>
+      <h6 lang="en">Van De Cipher</h6>
+    </div>
+  </footer>
+</div>
+  <script>
+    const tabButton = document.getElementById('tab-button');
+    const tabMenu = document.getElementById('tab-menu');
+
+    tabButton.addEventListener('click', () => {
+      tabMenu.classList.toggle('show');
+    });
+  </script>
+
+  <script>
+  let progress = 1;
+  const loaderText = document.getElementById("loader-text");
+  const loader = document.getElementById("loader");
+  const content = document.getElementById("page-content");
+
+  const interval = setInterval(() => {
+    progress++;
+    loaderText.textContent = progress + "%";
+
+    if (progress >= 100) {
+      clearInterval(interval);
+
+      
+      loader.style.opacity = 0;
+
+      
+      setTimeout(() => {
+        loader.style.display = "none";
+        content.style.display = "block";
+      }, 1000); 
+    }
+  }, 5);
+</script>
+
+
+</body>
+</html>
