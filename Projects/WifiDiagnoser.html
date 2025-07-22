@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYBER X</title>
+  <link rel="stylesheet" href="../Templates/WifiDiagnoser.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Almarai&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div id="loader">
+  <div id="loader-text">1%</div>
+</div>
+
+<div id="page-content" style="display: none;">
+
+  
+  <div class="bg"></div>
+
+  <header>
+    <div class="logo-container">
+      <img src="../Mainimages/logo.PNG" alt="Logo" class="logo" />
+    </div>
+
+    <div id="side-tab">
+      <div id="tab-button">☰</div>
+      <div id="tab-menu">
+        <ul>
+          <li><a href="#home"> بداية الصفحة </a></li>
+          <li><a href="../index.html">الصفحة الرئيسية</a></li>
+          <li><a href="#contact">تواصل معنا</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <section id="home" class="hero">
+    <div class="container">
+      <h2 lang="en"> wifi diagnoser </h2>
+      <p> Project by : Abdallah Yasir </p>
+    </div>
+  </section>
+
+  <section class="section">
+  <div class="container">
+
+  <div dir="rtl" style="text-align: right;">
+    <h2> Deauthentication Detector Using Esp32 C3 mini </h2>
+    
+    <p>بواسطة : عبدالله ياسر</p>
+
+    <p>
+      في مجال الأمن السيبراني، من المهم ألا نعتمد فقط على أدوات الحماية، بل أيضًا على أدوات الكشف والرصد. هذا المشروع يسلط الضوء على أداة صغيرة لكنها قوية يمكن استخدامها للكشف عن نوع خطير من الهجمات اللاسلكية: هجمات Deauthentication.
+    </p>
+
+    <p>
+      في هذا المشروع، استخدمت لوحة ESP32 ككاشف لفريمات Deauthentication، وهي نوع من فريمات الإدارة في شبكات الواي فاي تُستخدم لقطع الاتصال بين الأجهزة ونقطة الوصول.
+      الأداة التي طورتها مفيدة جدًا لمتخصصي الأمن السيبراني، حيث تساعدهم على تشخيص سبب انقطاع الاتصال عن جهاز معين أو توقف الشبكة فجأة. الهجوم يعتمد على استغلال نوع من الفريمات التي تُستخدم في الاتصالات اللاسلكية تُعرف بـ “فريمات الإدارة”، مثل فريمات البيانات وفريمات الربط، لكن الأهم هنا هو فريم Deauthentication.
+    </p>
+
+    <p>
+      فريم Deauth هو فريم يُستخدم لفصل الجهاز عن الشبكة. الخطر الحقيقي في هذا الفريم هو أنه غير مشفر، حتى ضمن الشبكات المؤمنة ببروتوكولات مثل WPA2 أو WPA3. بالتالي، يستطيع المهاجم بسهولة انتحال هذا الفريم وإرساله إلى الضحية. نوع الفريم يُعرف بالقيمة <code>0xC0</code>.
+    </p>
+
+    <p>
+      في هذا المشروع، صممت الأداة لتقوم فقط باكتشاف هذا النوع من الفريمات (Deauthentication) دون غيره. هذا يساعد في تصفية “الضجيج” داخل الشبكة والتركيز فقط على التهديد الفعلي.
+    </p>
+
+    <h3>لا حاجة لكمبيوتر</h3>
+    <p>
+      من أبرز مميزات هذا المشروع أنه لا يحتاج إلى حاسوب لتشغيله أو مراقبته. عند تشغيل ESP32،يمكنك ببساطة الوصول إلى واجهته من خلال متصفح الهاتف. فقط اتصل بنقطة الوصول الخاصة به، افتح المتصفح، وستكون داخل لوحة التحكم فورًا. </p>
+
+    <h3>لماذا هذا المشروع مهم؟</h3>
+    <p>
+      هذه الأداة الصغيرة تُظهر مدى القوة والمرونة التي توفرها لوحات ESP32 في مشاريع الأمن السيبراني. يمكنك برمجتها لأداء مهام محددة جدًا — مثل اكتشاف فريمات Deauth فقط — وتنجز العمل بكفاءة، بدون الحاجة إلى حاسوب كامل أو برمجيات معقدة.
+    </p>
+    <p>
+      والأهم من ذلك، أن كشف الهجوم الحقيقي أثناء حدوثه يُمكنك من اتخاذ القرار المناسب، سواء كان ذلك لحماية الضحية، أو تحديد نقطة وصول مزيفة، أو تتبع جهاز مشبوه.
+    </p>
+    <a href="https://github.com/CyberX-sec/Deauth-Detector-esp32-c3-mini"> كود المشروع على GitHub </a>
+
+    <p> الفيديو التالي يوضح الية مراقبة الهجمات من متصفح الويب حيث يتم تحديث الصفحة كل ست ثواني وتسجيل اعداد جديدة من اطارات Deauthentication </p>
+  </div>
+
+  <div class="video-container">
+    <iframe width="560" 
+    height="315"
+     src="https://www.youtube.com/embed/q8SvlEzpq4E?si=3sRH1waxLHiXd55b" 
+     title="YouTube video player" 
+     frameborder="0" 
+     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+       allowfullscreen></iframe>
+    </div>
+
+  <div dir="ltr" style="text-align: left;">
+    <h2>English Version</h2>
+    
+    <p>
+      In the field of cybersecurity, relying on protection tools alone is not enough. Detection and monitoring are just as essential. This project focuses on a small yet powerful tool that detects a dangerous type of wireless attack — the Deauthentication attack.
+    </p>
+
+    <p>
+      For this project, I used an ESP32 board as a deauthentication frame detector. This tool is helpful for cybersecurity specialists who want to diagnose exactly what caused a router or device to suddenly disconnect from the network.
+      The attacker here is abusing something fundamental to Wi-Fi communications: management frames. These include data frames, association frames, and most importantly for this case — deauthentication frames.
+    </p>
+
+    <p>
+      The deauthentication frame is used to disconnect devices from a network. The dangerous part is: it’s not encrypted — not even on WPA2 or WPA3 secured networks. So an attacker can easily spoof and send this frame to the victim. The frame type is identified by the value <code>0xC0</code>.
+    </p>
+
+    <p>
+      In this project, the ESP32 was programmed to detect only this specific frame (Deauthentication) to filter out all the noise and focus solely on the real threat.
+    </p>
+
+    <h3>No Computer Needed</h3>
+    <p>
+      One of the coolest aspects of this project is its simplicity. No need for a computer to run or interact with it. As soon as the ESP32 is powered on, the user can access the interface through any mobile browser. Just connect to the ESP32’s Wi-Fi access point, open the browser, and you’re in. No scripts. No terminals. Just plug and play.
+    </p>
+
+    <h3>Why This Matters</h3>
+    <p>
+      This small tool shows just how powerful and flexible ESP32 boards can be for cybersecurity purposes. You can assign them to very specific jobs — like detecting only deauth frames — and they can carry them out efficiently without needing a full PC or complex software.
+    </p>
+    <p>
+      More importantly, by detecting the real threat in real time, this kind of detection allows you to respond appropriately. Whether it’s protecting a victim, identifying a fake access point, or tracing a rogue device — this clarity enables action.
+    </p>
+  </div>
+</section>
+
+
+  <section id="contact" class="section">
+    <div class="container">
+      <h2>تواصل معنا</h2>
+      <p lang="en" >E-mail: cyberx.un@gmail.com</p>
+      <!-- <p lang="en" >GitHub: github.com/CyberX-sec</p> -->
+      <a href="https://github.com/CyberX-sec" target="_blank" class="telegram-btn" lang="en" >Github</a>
+      <a href="https://t.me/NTU_CyberX" target="_blank" class="telegram-btn" lang="en" >Telegram</a>
+      <!-- <a href="" target="_blank" class="telegram-btn" lang="en">instagram</a> -->
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p> All rights reserved exclusively by Cyber X &copy;</p>
+      <h6 lang="en">Van De Cipher</h6>
+    </div>
+  </footer>
+</div>
+  <script>
+    const tabButton = document.getElementById('tab-button');
+    const tabMenu = document.getElementById('tab-menu');
+
+    tabButton.addEventListener('click', () => {
+      tabMenu.classList.toggle('show');
+    });
+  </script>
+
+  <script>
+  let progress = 1;
+  const loaderText = document.getElementById("loader-text");
+  const loader = document.getElementById("loader");
+  const content = document.getElementById("page-content");
+
+  const interval = setInterval(() => {
+    progress++;
+    loaderText.textContent = progress + "%";
+
+    if (progress >= 100) {
+      clearInterval(interval);
+
+      
+      loader.style.opacity = 0;
+
+      
+      setTimeout(() => {
+        loader.style.display = "none";
+        content.style.display = "block";
+      }, 1000); 
+    }
+  }, 5);
+</script>
+
+
+</body>
+</html>
