@@ -241,7 +241,6 @@ footer a:hover {
     transform: scale(1.05);
 }
 
-/* توحيد الخط الأبيض والتكبير للصور */
 .double-image-section img,
 .project-image {
     border: 2px solid #e0e0e0;
