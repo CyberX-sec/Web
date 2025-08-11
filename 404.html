@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYBER X</title>
+  <link rel="stylesheet" href="Templates/Error404.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Almarai&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div id="loader">
+  <div id="loader-text">1%</div>
+</div>
+
+<div id="page-content" style="display: none;">
+
+  <div class="bg"></div>
+
+  <section id="home" class="hero">
+    <div class="container">
+      <h2>404</h2>
+      <p>الصفحة التي تبحث عنها غير موجودة او تم حذفها</p>
+    </div>
+  </section>
+        
+</div>
+
+<script>
+  let progress = 1;
+  const loaderText = document.getElementById("loader-text");
+  const loader = document.getElementById("loader");
+  const content = document.getElementById("page-content");
+
+  const interval = setInterval(() => {
+    progress++;
+    loaderText.textContent = progress + "%";
+
+    if (progress >= 100) {
+      clearInterval(interval);
+      loader.style.opacity = 0;
+
+      setTimeout(() => {
+        loader.style.display = "none";
+        content.style.display = "block";
+      }, 1000); 
+    }
+  }, 5);
+</script>
+
+</body>
+</html>
