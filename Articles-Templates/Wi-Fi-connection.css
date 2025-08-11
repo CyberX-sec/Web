@@ -4,7 +4,7 @@ body {
     margin: 0;
     font-family: 'Almarai', sans-serif;
     background-color: #000000;
-    background-image: url('../../Mainimages/background.JPEG');
+    background-image: url('../Mainimages/background.JPEG');
     background-position: top;
     background-repeat: no-repeat;
     background-size: cover;
@@ -12,6 +12,11 @@ body {
     direction: rtl;
     line-height: 1.6;
     overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
 }
 
 .bg {
@@ -43,7 +48,7 @@ body {
 }
 
 .hero {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(200, 200, 200, 0.1)), url('../../Mainimages/main1.JPEG') no-repeat center/cover;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(200, 200, 200, 0.1)), url('../Mainimages/main1.JPEG') no-repeat center/cover;
     padding: 4rem 2rem;
     position: relative;
     color: #fff;
@@ -215,31 +220,35 @@ footer a:hover {
 }
 
 .double-image-section {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    padding: 40px 0;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px; /* خفف المسافة بين الصور */
+    padding: 0;
+    margin: 0 auto;
+    max-width: 100%;
 }
 
 .double-image-section .column {
-    flex: 1 1 300px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin: 0;
+    padding: 0;
+    display: block;
 }
 
+
 .double-image-section img {
-    max-width: 100%;
+    display: block;
+    width: 100%;
     height: auto;
     border-radius: 6px;
     box-shadow: 0 0 15px rgba(0,0,0,0.3);
     transition: transform 0.3s ease;
+    margin: 0; /* شيل أي مسافات خارجية */
 }
 
 .double-image-section img:hover {
     transform: scale(1.05);
 }
+
 
 .double-image-section img,
 .project-image {
@@ -266,13 +275,20 @@ footer a:hover {
 
 @media (max-width: 768px) {
     .double-image-section {
-        flex-direction: column;
-        padding: 20px 0;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 0 10px;
     }
 
     .double-image-section img {
-        width: 100%;
-        max-width: 320px;
-        margin: 0 auto;
+        max-width: 550px; 
+        margin: 0 auto; 
+        width: 100%; 
+        height: auto;
     }
 }
+
+
+
+
+
