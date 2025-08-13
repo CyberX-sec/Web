@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> RCE-Story </title>
+  <link rel="stylesheet" href="../Articles-Templates/RCE-style.css" />
+</head>
+<body>
+<body dir="rtl" style="text-align: right;"></body>
+  <header>
+    <div class="container">
+      <h1>Article By : Ehab thaer</h1>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+    
+      <h2>تحديث مؤجل ... اختراق مؤكد</h2>
+      <p> بواسطة : ايهاب ثائر  </p>
+      <h3>الساعة 8:44 صباحًا</h3>
+      <p>أضواء المكتب الأبيض تلمع فوق رأس ديكستر، وأصوات المراوح في غرفة السيرفر تملأ الخلفية.
+      شاشة حاسوبه تومض بإشعار أحمر:</p>
+
+      <p class="highlight">"تحديث أمني عاجل – إصلاح ثغرة RCE في سيرفر البريد"</p>
+
+      <p>يتوقف عن الكتابة، يقرأ السطر ببطء.  
+      يرتشف قهوته التي فقدت حرارتها، ينظر إلى قائمة مهامه المزدحمة، ويقول:  
+       "بعد الاجتماع… ما راح يصير شي."</p>
+      <p>بضغطة زر، يغلق الإشعار.</p>
+
+      <p>على بعد آلاف الكيلومترات…  
+      غرفة صغيرة مضاءة بضوء شاشة واحد.      
+      وجه مجهول ينعكس على زجاج اللابتوب،  
+      سطر أوامر مفتوح:</p>
+
+      <p class="highlight2">shodan search org:"Target Corp" port:443</p>
+
+      <p>خدمة <strong>Shodan</strong> تعيد النتائج: خوادم مكشوفة على الإنترنت، بينها خادم البريد للشركة، يعمل بإصدار قديم.</p>
+
+      <p>المهاجم يعرف أن الثغرة <strong>RCE</strong> التي تم الإعلان عنها صباح اليوم تسمح بتنفيذ أوامر على الخادم عن بعد، بدون تسجيل دخول، عبر حقن أوامر في طلب <strong>HTTP</strong> مُعدّل.  
+      يفتح <strong>GitHub</strong>، يبحث باسم الثغرة + كلمة <strong>"exploit"</strong>، يجد كود جاهز بلغة Python، مع تعليمات تشغيل.</p>
+
+      <h3>09:13 مساءً – نفس اليوم </h3>
+      <p>
+      حزم تتحرك عبر الألياف البصرية،  
+      الاستغلال يُنفذ في أقل من ثانيتين:</p>
+      <ul>
+    <li>إرسال طلب HTTP خاص يستغل الثغرة.</li>
+    <li>الخادم ينفذ الأمر المرفق وكأن المهاجم يكتب مباشرة في الطرفية (Terminal).</li>
+    <li>أمر جديد يرفع ملف <strong>webshell.php</strong> إلى مجلد مرفقات البريد.</li>
+</ul>
+
+      
+      <p>الـ <strong>Web Shell</strong> عبارة عن صفحة PHP تعطي المهاجم لوحة تحكم كاملة:</p>
+      <ul>
+        <li>تصفح الملفات.</li>
+        <li>تحميل/تنزيل ملفات.</li>
+        <li>تنفيذ أوامر نظام.</li>
+      </ul>
+
+      <p>المهاجم يفتحها من المتصفح:</p>  
+      <p class="highlight2">"https://mail.targetcorp.com/attachments/webshell.php"</p>
+      <p>من هناك، يبدأ بتنزيل البريد، العقود، بيانات الموظفين، وبعض الملفات المالية.  
+      كل شيء في صمت تام… حتى المراوح استمرت بالدوران كأن شيئًا لم يحدث.</p>
+
+      <h3>اليوم الثالث – 10:05 صباحًا</h3>
+      <p> 
+      ديكستر يتفحص لوحة المراقبة،  
+      الرسوم البيانية تظهر نشاطًا غير معتاد عند الفجر:  
+      حجم نقل بيانات ضخم إلى عنوان IP في أوروبا الشرقية.</p>
+
+      <p>يفتح السجلات…</p>
+      <ul>
+        <li>IP خارجي متصل منذ يومين.</li>
+        <li>أوامر تنفيذ عن بُعد في السجلات.</li>
+        <li>كلمات مرور مبدلة.</li>
+        <li>ملفات مفقودة.</li>
+      </ul>
+
+      <p>يشعر بوخزة في صدره، يخلع سماعاته، يقف فجأة.  
+      الغرفة نفسها… لكن شيئًا ما تغيّر.</p>
+        
+      <h3>التشريح التقني للحادثة</h3>
+      <ul>
+        <li>الثغرة: Remote Code Execution في خادم البريد، تسمح بحقن أوامر في معالج الطلبات.</li>
+        <li>الخطأ: تأجيل التحديث الأمني الحرج رغم توفره في نفس اليوم.</li>
+        <li>الأداة: سكربت Python متاح على GitHub، يستغل الثغرة ويرفع Web Shell.</li>
+        <li>الزمن: أقل من 24 ساعة من نشر التحديث إلى تنفيذ الاختراق.</li>
+        <li>الأثر: تسريب بيانات، إنشاء باب خلفي، فقدان السيطرة على الحسابات.</li>
+      </ul><br>
+
+      <p>- التحديثات الأمنية ليست رفاهية أو خيارًا إداريًا،  
+      هي مثل إغلاق الباب قبل أن يقتحم أحدهم منزلك. 
+      <br>
+      كل ساعة تأخير = فرصة لشخص يجلس في غرفة مظلمة ينتظر أن تترك نافذتك مفتوحة.</p>
+
+      <h2>English Version</h2>
+      <div dir="ltr" style="text-align: left;">
+        <h2>Deferred Update ... Confirmed Breach</h2>
+<h3>8:44 AM</h3>
+<p>The white office lights glimmer above Dexter's head, and the server room fans fill the background with sound.
+His computer screen flashes a red notification:</p>
+
+<p class="highlight">"Urgent Security Update – Fixing RCE Vulnerability on Mail Server"</p>
+
+<p>He stops typing, reads the line slowly.  
+He sips his now-cold coffee, looks at his crowded task list, and says:  
+ "After the meeting… nothing will happen."</p>
+<p>With a click, he dismisses the notification.</p>
+
+<p>Thousands of kilometers away…  
+A small room lit by a single screen.  
+An unknown face reflects on the laptop glass,  
+a command line is open:</p>
+
+<p class="highlight2">shodan search org:"Target Corp" port:443</p>
+
+<p>The <strong>Shodan</strong> service returns the results: exposed servers on the internet, including the company's mail server, running an outdated version.</p>
+
+<p>The attacker knows the <strong>RCE</strong> vulnerability announced this morning allows executing commands on the server remotely, without login, via command injection in a modified <strong>HTTP</strong> request.  
+He opens <strong>GitHub</strong>, searches the vulnerability name + the word <strong>"exploit"</strong>, finds ready-made Python code, with running instructions.</p>
+
+<h3>09:13 PM – Same Day</h3>
+<p>
+Packets move through the fiber optics,  
+the exploitation executes in less than two seconds:</p>
+<ul>
+<li>Sending a special HTTP request that exploits the vulnerability.</li>
+<li>The server executes the attached command as if the attacker is typing directly in the Terminal.</li>
+<li>A new command uploads a <strong>webshell.php</strong> file to the mail attachments folder.</li>
+</ul>
+
+<p>The <strong>Web Shell</strong> is a PHP page giving the attacker a full control panel:</p>
+<ul>
+<li>Browsing files.</li>
+<li>Uploading/downloading files.</li>
+<li>Executing system commands.</li>
+</ul>
+
+<p>The attacker opens it from the browser:</p>  
+<p class="highlight2">"https://mail.targetcorp.com/attachments/webshell.php"</p>
+<p>From there, he starts downloading emails, contracts, employee data, and some financial files.  
+Everything in complete silence… even the fans kept running as if nothing happened.</p>
+
+<h3>Day Three – 10:05 AM</h3>
+<p> 
+Dexter inspects the monitoring dashboard,  
+graphs show unusual activity at dawn:  
+Massive data transfer to an IP address in Eastern Europe.</p>
+
+<p>He opens the logs…</p>
+<ul>
+<li>External IP connected for two days.</li>
+<li>Remote execution commands in the logs.</li>
+<li>Passwords changed.</li>
+<li>Missing files.</li>
+</ul>
+
+<p>He feels a pang in his chest, removes his headphones, and stands abruptly.  
+Same room… but something has changed.</p>
+    
+<h3>Technical Breakdown of the Incident</h3>
+<ul>
+<li>Vulnerability: Remote Code Execution on the mail server, allowing command injection into the request handler.</li>
+<li>Mistake: Deferring the critical security update despite its availability the same day.</li>
+<li>Tool: Python script available on GitHub, exploits the vulnerability and uploads a Web Shell.</li>
+<li>Timeframe: Less than 24 hours from the update release to breach execution.</li>
+<li>Impact: Data leakage, creation of a backdoor, loss of account control.</li>
+</ul><br>
+
+<p>- Security updates are not a luxury or an administrative choice,  
+they are like locking the door before someone breaks into your house. 
+<br>
+Every hour of delay = a chance for someone sitting in a dark room waiting for you to leave your window open.</p>
