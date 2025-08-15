@@ -47,7 +47,7 @@ header {
   padding: 4rem 2rem;
   position: relative;
   color: #fff;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(200, 200, 200, 0.1)), url('../Team-images/Ehab.jpg') no-repeat center/cover;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(200, 200, 200, 0.1)), url('../Team-images/Ehab.JPEG') no-repeat center/cover;
 }
 
 .hero::before {
@@ -298,4 +298,16 @@ footer {
   left: 0;
   width: 100%;
   height: 100%;
+}
+.highlight {
+    display: inline-block;
+    background-color: rgba(112, 108, 108, 0.15);
+    border-left: 3px solid #037890;
+    padding: 6px 7px;
+    border-radius: 8px;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #fff;
+    font-weight: 400;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
