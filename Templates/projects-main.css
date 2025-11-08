@@ -219,6 +219,13 @@ footer {
 
 :lang(en) {
   font-family: 'Cinzel', serif;
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+
+body :lang(en) {
+  display: inline-block;
 }
 
 #loader {

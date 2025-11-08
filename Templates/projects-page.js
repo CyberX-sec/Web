@@ -20,6 +20,7 @@
     if (heroSubtitleEn && profile.displayName) {
       heroSubtitleEn.textContent = `Projects by ${profile.displayName}`;
       heroSubtitleEn.setAttribute('lang', 'en');
+      heroSubtitleEn.setAttribute('dir', 'ltr');
     }
   }
 
