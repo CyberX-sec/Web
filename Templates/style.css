@@ -10,6 +10,12 @@ body {
     line-height: 1.6;
 }
 
+.translation {
+  display: block;
+  font-size: 1.1rem;
+  color: rgba(224, 224, 224, 0.65);
+}
+
 
 .container {
     width: 90%;
@@ -65,10 +71,13 @@ nav a:hover {
 
 
 .hero {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(200, 200, 200, 0.1)), url('../Mainimages/main1.JPEG') no-repeat center/cover;
-    padding: 4rem 2rem;
-    position: relative;
-    color: #fff;
+  background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(200, 200, 200, 0.1)), var(--homepage-hero-image, url('../Mainimages/main1.JPEG'));
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  padding: 4rem 2rem;
+  position: relative;
+  color: #fff;
 }
 
 .hero::before {
@@ -106,6 +115,47 @@ nav a:hover {
     text-align: center;
 }
 
+.home-sections .container {
+  display: grid;
+  gap: 2.5rem;
+  padding-top: 1rem;
+}
+
+.home-section-block {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 2.5rem 1.8rem;
+  box-shadow: 0 18px 32px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+}
+
+.home-section-header h2 {
+  margin: 0;
+  font-size: 2.3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.35rem;
+}
+
+.home-section-body {
+  margin-top: 1.8rem;
+}
+
+.article-card.view-all-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(34, 34, 34, 0.8));
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 15px 28px rgba(0, 0, 0, 0.35);
+}
+
+.article-card[data-placeholder] {
+  opacity: 0.75;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+}
+
 .projects, .team-grid, .articles {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -119,6 +169,18 @@ nav a:hover {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
     text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.team-member {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.team-member:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 4px;
 }
 
 .project-card:hover, .team-member:hover, .article-card:hover {
@@ -137,6 +199,16 @@ nav a:hover {
     font-size: 1rem;
     color: #c9c9c9;
     margin-bottom: 0.5rem;
+}
+
+.article-card img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 12px;
+  margin: 0 0 1rem;
+  display: block;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .team-member img {
@@ -388,21 +460,20 @@ body {
 }
 
 #music-icon {
-  position: relative;
-  top: 10px;
-  right: 210px;
-  width: 20px;
-  height: 20px;
+  display: block;
+  width: 36px;
+  height: 36px;
+  margin: 2.5rem auto;
   background: url('https://cdn-icons-png.flaticon.com/512/727/727245.png') no-repeat center center;
   background-size: contain;
   cursor: pointer;
-  z-index: 9999;
   filter: grayscale(0.7);
-  transition: filter 0.3s ease;
-  opacity: 0.5;
+  transition: filter 0.3s ease, transform 0.2s ease;
+  opacity: 0.2;
 }
 #music-icon:hover {
   filter: grayscale(0);
+  transform: scale(1.05);
 }
 
 .log-terminal-window {

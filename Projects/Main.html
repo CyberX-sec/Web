@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="../Templates/projects-main.css" />
   <link href="https://fonts.googleapis.com/css2?family=Almarai&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet" />
+  <script src="../Templates/api-client.js" defer></script>
+  <script src="../Templates/site-branding.js" defer></script>
+  <script src="../Templates/projects-page.js" defer></script>
+  <script src="../Templates/content-list.js" defer></script>
 </head>
 <body>
 
@@ -35,6 +39,7 @@
           <li><a href="#lectures">الدروس</a></li>
           <li><a href="#blog">المقالات</a></li>
           <li><a href="#team">الفريق</a></li> -->
+          <li><a href="../Services/Main-Services.html">الخدمات</a></li>
           <li><a href="#contact">تواصل معنا</a></li>
         </ul>
       </div>
@@ -52,49 +57,24 @@
 <section id="Projects" class="section">
     <div class="container">
       <!-- <h2 lang="en" > titles </h2> -->
+      <template id="content-card-template">
+        <div class="article-card">
+          <img src="" alt="" loading="lazy">
+          <h3></h3>
+          <p></p>
+          <a href="#" class="read-more-btn">اقرأ المزيد</a>
+        </div>
+      </template>
+
       <section id="projects" class="section">
         <div class="container">
-            <div class="projects">
-                <div class="article-card">
-                    <h3> DevSecOps Pipeline </h3>
-                    <p> هو مسار متكامل تمر فيه أكواد تطبيقات الويب تلقائيًا، ويتم في كل مرحلة تنفيذ أدوات أمنية لفحص الكود واكتشاف الثغرات قبل إطلاق التطبيق.</p>
-                    <a href="DevOps.html" class="read-more-btn"> اقرأ المزيد </a>
-                </div>
-
-                 <div class="article-card">
-                    <h3> Bad USB </h3>
-                    <p> فلاش درايف يمكنه التحكم بالكمبيوتر وتنفيذ عمليات خطيرة مثل سرقة البيانات الحساسة او تحميل البرمجيات الخبيثة </p>
-                    <a href="BadUSB.html" class="read-more-btn"> اقرأ المزيد </a>
-                </div>
-
-                <div class="article-card">
-                    <h3> GOOD USB v1 - Beta </h3>
-                    <p> فلاش درايف تفاعلي يهدف إلى توعيتك بمخاطر وإمكانيات أجهزة الـUSB الغريبة من خلال تجربة تعليمية آمنة تحاكي الهجمات الحقيقية دون التسبب بأي ضرر. </p>
-                    <a href="GoodUSB.html" class="read-more-btn"> اقرأ المزيد </a>
-                </div>
-
-                <div class="article-card">
-                    <h3> Sentinel - HID v1 </h3>
-                    <p> هو نظام بسيط وفعّال يهدف إلى رصد الأجهزة التي تُعرّف نفسها كأجهزة إدخال (مثل الكيبورد أو الماوس) عند توصيلها بالحاسوب عبر USB.</p>
-                    <a href="HID.html" class="read-more-btn"> اقرأ المزيد </a>
-                </div>
-
-                <div class="article-card">
-                    <h3> Evil - Update </h3>
-                    <p>
-مشروع "Evil Update" هو أداة مبنية على ESP32 Wroom تُحاكي صفحة تحديث مزيفة للراوتر بهدف سرقة كلمة المرور. تنشئ الأداة نقطة وصول مقلدة بنفس اسم الشبكة الأصلية، وعند اتصال الضحية، تُعرض عليه صفحة تطلب إدخال كلمة المرور بحجة التحديث. يوضح المشروع كيفية استغلال الهندسة الاجتماعية في اختراق الشبكات،
-</p>
-
-                    <a href="EvilUpdate.html" class="read-more-btn"> اقرأ المزيد </a>
-                </div>
-
-                <div class="article-card">
-                    <h3> Wifi Diagnoser - Deauthentication Detector </h3>
-                    <p> هذا المشروع يسلط الضوء على أداة صغيرة لكنها قوية يمكن استخدامها للكشف عن نوع خطير من الهجمات اللاسلكية: هجمات Deauthentication. </p>
-                    <a href="WifiDiagnoser.html" class="read-more-btn"> اقرأ المزيد </a>
-                </div>
-
+          <div class="projects" id="projects-list" data-content-source="projects" data-empty-text="لا توجد مشاريع منشورة حالياً.">
+            <div class="article-card" data-placeholder>
+              <h3>جاري تحميل المشاريع…</h3>
+              <p>سنقوم بعرض جميع الابتكارات بعد الاتصال بالخادم واسترجاع البيانات.</p>
+              <a href="#" class="read-more-btn" aria-disabled="true">اقرأ المزيد</a>
             </div>
+          </div>
         </div>
       </section>
     </div>
@@ -103,10 +83,10 @@
   <section id="contact" class="section">
     <div class="container">
       <h2>تواصل معنا</h2>
-      <p lang="en" >E-mail: cyberx.un@gmail.com</p>
+      <p lang="en" data-contact-email data-label="E-mail: " data-default-text="E-mail: cyberx.un@gmail.com">E-mail: cyberx.un@gmail.com</p>
       <!-- <p lang="en" >GitHub: github.com/CyberX-sec</p> -->
-      <a href="https://github.com/CyberX-sec" target="_blank" class="telegram-btn" lang="en" >Github</a>
-      <a href="https://t.me/NTU_CyberX" target="_blank" class="telegram-btn" lang="en" >Telegram</a>
+      <a href="https://github.com/CyberX-sec" target="_blank" rel="noopener noreferrer" class="telegram-btn" lang="en" data-contact-github data-default-text="Github" data-default-href="https://github.com/CyberX-sec">Github</a>
+      <a href="https://t.me/NTU_CyberX" target="_blank" rel="noopener noreferrer" class="telegram-btn" lang="en" data-contact-telegram data-default-text="Telegram" data-default-href="https://t.me/NTU_CyberX">Telegram</a>
       <!-- <a href="" target="_blank" class="telegram-btn" lang="en">instagram</a> -->
     </div>
   </section>
@@ -126,66 +106,6 @@
       tabMenu.classList.toggle('show');
     });
   </script>
-
-  <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const audio = new Audio("Music/Immortality1.mp3"); 
-    audio.loop = true;
-
-    const icon = document.getElementById("music-icon");
-    let isPlaying = false;
-
-    icon.addEventListener("click", function () {
-      if (!isPlaying) {
-        audio.play().then(() => {
-          isPlaying = true;
-          icon.style.filter = "none";
-        }).catch(error => {
-          console.log("خطأ في تشغيل الصوت:", error);
-        });
-      } else {
-        audio.pause();
-        isPlaying = false;
-        icon.style.filter = "grayscale(0.7)";
-      }
-    });
-  });
-</script>
-
-<script>
-  const logContainer = document.getElementById("log-container");
-
-  const logs = [
-    "[+] “Most good programmers do programming not because they expect to get paid or get adulation by the public, but because it is fun to program.” ",
-    "[+] “Theory and practice sometimes clash. And when that happens, theory loses, Every single time.” ",
-    "[+] “I'd argue that everybody wants to do something that matters” ",
-    "[+] “I did learn fairly early that the best and the most effective way to lead is by letting people do things because they want to do them, not because you want them to.”  ",
-    "[+] “Do no harm” ",
-    "[+] “There are three things that have meaning for life. They are the motivational factors for everything in your life––for anything that you do or any living thing does: The first is survival, the second is social order, and the third is entertainment. Everything in life progresses in that order.”  ",
-    "[+] “I am not a visionary. I'm an engineer. I'm happy with the people who are wandering around looking at the stars but I am looking at the ground and I want to fix the pothole before I fall in.”   ",
-    "[+] “Intelligence is the ability to avoid doing work, yet getting the work done.” ",
-    "[+] “Talk is cheap. Show me the code.” ",
-    "[+] “Do no harm” ",
-
-  ];
-
-  function getTime() {
-    const now = new Date();
-    return `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes()
-      .toString()
-      .padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}]`;
-  }
-
-  function addLogLine() {
-    const line = document.createElement("div");
-    line.className = "log-line";
-    line.textContent = `${getTime()} ${logs[Math.floor(Math.random() * logs.length)]}`;
-    logContainer.appendChild(line);
-    logContainer.scrollTop = logContainer.scrollHeight;
-  }
-
-  setInterval(addLogLine, 10000);
-</script>
 
 <script>
   let progress = 1;

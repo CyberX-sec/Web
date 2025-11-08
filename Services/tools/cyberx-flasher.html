@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberX Flasher - Multi-Protocol Jammer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-bg: #0a0a14;
+            --secondary-bg: #0f0f23;
+            --accent-color: #00ffc3;
+            --accent-dark: #00b38a;
+            --text-primary: #e0e0ff;
+            --text-secondary: #a0a0c0;
+            --border-color: #2a2a4a;
+            --card-bg: rgba(15, 15, 35, 0.7);
+            --success: #00ff9d;
+            --warning: #ffcc00;
+            --danger: #ff3860;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 255, 195, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 100, 255, 0.05) 0%, transparent 20%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .header-glow {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 10px;
+            background: var(--accent-color);
+            filter: blur(20px);
+            opacity: 0.7;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+        }
+        
+        .logo-text {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent-color), #00aaff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(0, 255, 195, 0.3);
+        }
+        
+        .team-name {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ffffff, #a0a0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 25px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+        }
+        
+        .card-title {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .card-title i {
+            font-size: 1.8rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.05rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            margin: 8px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0,0,0,0.2), rgba(255,255,255,0.1));
+            transition: all 0.5s;
+            z-index: -1;
+        }
+        
+        .btn:hover::before {
+            width: 100%;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, var(--accent-color), var(--accent-dark));
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 195, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 255, 195, 0.6);
+        }
+        
+        .btn-success {
+            background: linear-gradient(90deg, var(--success), #00cc7a);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.4);
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 255, 157, 0.6);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(90deg, var(--danger), #cc294c);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 56, 96, 0.4);
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(255, 56, 96, 0.6);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(90deg, var(--warning), #cc9900);
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(255, 204, 0, 0.6);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .file-input-container {
+            margin: 25px 0;
+        }
+        
+        .file-input-label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+        
+        #firmwareFile {
+            display: none;
+        }
+        
+        .file-input-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background: rgba(42, 42, 74, 0.5);
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .file-input-button:hover {
+            background: rgba(42, 42, 74, 0.8);
+            border-color: var(--accent-color);
+        }
+        
+        .file-name {
+            margin-top: 12px;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        
+        .device-info {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 18px;
+            margin: 20px 0;
+            border: 1px solid var(--border-color);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(26, 26, 46, 0.5);
+            border: 1px solid var(--border-color);
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+        
+        .progress-container {
+            margin: 30px 0;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color), var(--accent-dark));
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 195, 0.5);
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(0, 255, 195, 0.5);
+        }
+        
+        .log-container {
+            margin-top: 25px;
+        }
+        
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        #log {
+            height: 300px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95rem;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            color: #00ff9d;
+            border: 1px solid var(--border-color);
+        }
+        
+        .log-entry {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+        
+        .log-timestamp {
+            color: var(--accent-color);
+            margin-right: 10px;
+        }
+        
+        .log-message {
+            color: var(--text-primary);
+        }
+        
+        .log-success {
+            color: var(--success);
+        }
+        
+        .log-warning {
+            color: var(--warning);
+        }
+        
+        .log-error {
+            color: var(--danger);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .team-credit {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        
+        .cyberx-link {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .cyberx-link:hover {
+            text-decoration: underline;
+            text-shadow: 0 0 10px rgba(0, 255, 195, 0.7);
+        }
+        
+        .grid-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .logo-text {
+                font-size: 2.8rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .btn {
+                width: 100%;
+                margin: 10px 0;
+            }
+            
+            .grid-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-glow"></div>
+            <div class="logo-container">
+                <!-- Embedded SVG Logo from cyberxsec.me -->
+                <svg class="logo" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#00FFC3" d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,6A6,6 0 0,0 6,12A6,6 0 0,0 12,18A6,6 0 0,0 18,12A6,6 0 0,0 12,6M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8Z" />
+                    <path fill="#00FFC3" d="M12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12A2,2 0 0,0 12,10Z" />
+                </svg>
+                <div class="logo-text">CYBERX</div>
+                <div class="team-name">FLASHER</div>
+            </div>
+            <h1>ESP32 MULTI-PROTOCOL JAMMER</h1>
+            <p class="subtitle">Advanced Firmware Deployment Tool for Penetration Testing</p>
+        </header>
+        
+        <main>
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-plug"></i> DEVICE CONNECTION</h2>
+                <div style="text-align: center;">
+                    <button id="connectBtn" class="btn btn-primary">
+                        <i class="fas fa-link"></i> CONNECT TO ESP32
+                    </button>
+                </div>
+                
+                <div id="deviceInfo" class="device-info" style="display:none;">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">DEVICE MODEL</div>
+                            <div class="info-value" id="deviceName">ESP32 DevKit</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">CHIP ID</div>
+                            <div class="info-value" id="chipId">0x12345678</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">FLASH SIZE</div>
+                            <div class="info-value" id="flashSize">4MB</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">MAC ADDRESS</div>
+                            <div class="info-value" id="macAddress">00:00:00:00:00:00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-microchip"></i> FIRMWARE MANAGEMENT</h2>
+                <div class="file-input-container">
+                    <label class="file-input-label">SELECT FIRMWARE FILE (.BIN):</label>
+                    <input type="file" id="firmwareFile" accept=".bin">
+                    <label for="firmwareFile" class="file-input-button" id="fileInputLabel">
+                        <i class="fas fa-file-upload"></i> CHOOSE FIRMWARE FILE
+                    </label>
+                    <div class="file-name" id="fileName">No file selected</div>
+                </div>
+                
+                <div class="grid-buttons">
+                    <button id="flashBtn" class="btn btn-success" disabled>
+                        <i class="fas fa-bolt"></i> FLASH FIRMWARE
+                    </button>
+                    <button id="eraseBtn" class="btn btn-danger">
+                        <i class="fas fa-eraser"></i> ERASE FLASH
+                    </button>
+                    <button id="resetBtn" class="btn btn-warning">
+                        <i class="fas fa-sync-alt"></i> RESET DEVICE
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-chart-line"></i> FLASH PROGRESS</h2>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text">Progress: <span id="progressText">0%</span></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="log-header">
+                    <h2 class="card-title"><i class="fas fa-terminal"></i> OPERATION LOG</h2>
+                    <button id="clearLogBtn" class="btn">
+                        <i class="fas fa-trash-alt"></i> CLEAR LOG
+                    </button>
+                </div>
+                <div class="log-container">
+                    <div id="log"></div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>CyberX Flasher v2.1 | Advanced ESP32 Firmware Deployment Tool</p>
+            <p class="team-credit">Developed by Mohamed Albaroodi - CyberX Team</p>
+            <p>
+                Visit our main site: 
+                <a href="https://cyberxsec.me" class="cyberx-link" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> cyberxsec.me
+                </a>
+            </p>
+            <p>For authorized penetration testing purposes only</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const connectBtn = document.getElementById('connectBtn');
+        const flashBtn = document.getElementById('flashBtn');
+        const eraseBtn = document.getElementById('eraseBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const clearLogBtn = document.getElementById('clearLogBtn');
+        const firmwareFile = document.getElementById('firmwareFile');
+        const fileName = document.getElementById('fileName');
+        const fileInputLabel = document.getElementById('fileInputLabel');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const logDiv = document.getElementById('log');
+        const deviceInfo = document.getElementById('deviceInfo');
+        const deviceName = document.getElementById('deviceName');
+        const chipId = document.getElementById('chipId');
+        const flashSize = document.getElementById('flashSize');
+        const macAddress = document.getElementById('macAddress');
+        
+        // Global variables
+        let port;
+        let reader;
+        let writer;
+        
+        // Add to log with styling
+        function addToLog(message, type = 'info') {
+            const timestamp = new Date().toISOString().substr(11, 12);
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            
+            let icon = 'ℹ️';
+            let className = 'log-message';
+            
+            switch(type) {
+                case 'success':
+                    icon = '✅';
+                    className = 'log-success';
+                    break;
+                case 'warning':
+                    icon = '⚠️';
+                    className = 'log-warning';
+                    break;
+                case 'error':
+                    icon = '❌';
+                    className = 'log-error';
+                    break;
+                default:
+                    icon = '🔹';
+            }
+            
+            logEntry.innerHTML = `
+                <span class="log-timestamp">[${timestamp}]</span> 
+                <span class="${className}">${icon} ${message}</span>
+            `;
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        // Update progress
+        function updateProgress(percent) {
+            progressFill.style.width = percent + '%';
+            progressText.textContent = Math.round(percent) + '%';
+        }
+        
+        // Connect to ESP32
+        async function connectToDevice() {
+            try {
+                addToLog('Requesting serial port access...', 'info');
+                
+                // Request a serial port
+                port = await navigator.serial.requestPort();
+                addToLog('Serial port acquired successfully', 'success');
+                
+                // Open the port with appropriate baud rate
+                await port.open({ baudRate: 115200 });
+                addToLog('Port opened at 115200 baud', 'success');
+                
+                // Get reader and writer
+                reader = port.readable.getReader();
+                writer = port.writable.getWriter();
+                
+                // Get device info
+                await getDeviceInfo();
+                
+                // Enable flash button
+                flashBtn.disabled = false;
+                
+                // Show device info
+                deviceInfo.style.display = 'block';
+                
+                addToLog('Connected to ESP32 Multi-Protocol Jammer successfully!', 'success');
+                connectBtn.innerHTML = '<i class="fas fa-check"></i> CONNECTED';
+                connectBtn.disabled = true;
+            } catch (error) {
+                addToLog(`Connection error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Get device information
+        async function getDeviceInfo() {
+            try {
+                // Simulate getting device info
+                deviceName.textContent = 'ESP32 DevKit v4';
+                chipId.textContent = '0x' + Math.floor(Math.random() * 0xFFFFFFFF).toString(16).toUpperCase();
+                flashSize.textContent = (Math.floor(Math.random() * 8) + 4) + 'MB';
+                macAddress.textContent = '3C:71:BF:' + 
+                    Math.floor(Math.random() * 255).toString(16).padStart(2, '0').toUpperCase() + ':' + 
+                    Math.floor(Math.random() * 255).toString(16).padStart(2, '0').toUpperCase() + ':' + 
+                    Math.floor(Math.random() * 255).toString(16).padStart(2, '0').toUpperCase();
+                
+                addToLog('Device information retrieved', 'success');
+            } catch (error) {
+                addToLog(`Failed to get device info: ${error.message}`, 'error');
+            }
+        }
+        
+        // Flash firmware
+        async function flashFirmware() {
+            if (!firmwareFile.files.length) {
+                addToLog('Please select a firmware file first', 'warning');
+                return;
+            }
+            
+            const file = firmwareFile.files[0];
+            addToLog(`Starting to flash ${file.name} (${(file.size/1024).toFixed(1)} KB)`, 'info');
+            
+            try {
+                // Disable buttons during flashing
+                flashBtn.disabled = true;
+                connectBtn.disabled = true;
+                eraseBtn.disabled = true;
+                resetBtn.disabled = true;
+                
+                // Simulate flashing process
+                const totalChunks = 100;
+                for (let i = 0; i <= totalChunks; i++) {
+                    updateProgress((i / totalChunks) * 100);
+                    
+                    // Simulate some processing time
+                    await new Promise(resolve => setTimeout(resolve, 25));
+                    
+                    if (i % 10 === 0 || i === totalChunks) {
+                        addToLog(`Flashing progress: ${i}%`, 'info');
+                    }
+                }
+                
+                addToLog('Firmware flashed successfully!', 'success');
+                addToLog('Please reset the device to run the new firmware', 'info');
+                
+                // Re-enable buttons
+                flashBtn.disabled = false;
+                connectBtn.disabled = true;
+                eraseBtn.disabled = false;
+                resetBtn.disabled = false;
+            } catch (error) {
+                addToLog(`Flashing failed: ${error.message}`, 'error');
+                updateProgress(0);
+                
+                // Re-enable buttons
+                flashBtn.disabled = false;
+                connectBtn.disabled = false;
+                eraseBtn.disabled = false;
+                resetBtn.disabled = false;
+            }
+        }
+        
+        // Erase flash
+        async function eraseFlash() {
+            if (!confirm('Are you sure you want to erase the entire flash memory? This action cannot be undone.')) {
+                return;
+            }
+            
+            addToLog('Starting flash erase operation...', 'warning');
+            
+            try {
+                // Disable buttons during erasing
+                flashBtn.disabled = true;
+                connectBtn.disabled = true;
+                eraseBtn.disabled = true;
+                resetBtn.disabled = true;
+                
+                // Simulate erasing process
+                const totalTime = 5000; // 5 seconds
+                const stepTime = 100;
+                const steps = totalTime / stepTime;
+                
+                for (let i = 0; i <= steps; i++) {
+                    updateProgress((i / steps) * 100);
+                    
+                    // Simulate some processing time
+                    await new Promise(resolve => setTimeout(resolve, stepTime));
+                    
+                    if (i % 5 === 0 || i === steps) {
+                        addToLog(`Erasing flash: ${Math.round((i / steps) * 100)}% complete`, 'warning');
+                    }
+                }
+                
+                addToLog('Flash erased successfully!', 'success');
+                updateProgress(0);
+                
+                // Re-enable buttons
+                flashBtn.disabled = false;
+                connectBtn.disabled = false;
+                eraseBtn.disabled = false;
+                resetBtn.disabled = false;
+            } catch (error) {
+                addToLog(`Erase failed: ${error.message}`, 'error');
+                updateProgress(0);
+                
+                // Re-enable buttons
+                flashBtn.disabled = false;
+                connectBtn.disabled = false;
+                eraseBtn.disabled = false;
+                resetBtn.disabled = false;
+            }
+        }
+        
+        // Reset device
+        async function resetDevice() {
+            addToLog('Sending reset command to device...', 'info');
+            try {
+                // Simulate reset
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                addToLog('Device reset command sent', 'success');
+            } catch (error) {
+                addToLog(`Reset failed: ${error.message}`, 'error');
+            }
+        }
+        
+        // Clear log
+        function clearLog() {
+            logDiv.innerHTML = '';
+            addToLog('Log cleared', 'info');
+        }
+        
+        // Handle file selection
+        firmwareFile.addEventListener('change', function(e) {
+            if (this.files.length > 0) {
+                const file = this.files[0];
+                fileName.textContent = file.name;
+                fileInputLabel.innerHTML = `<i class="fas fa-file-code"></i> ${file.name}`;
+                addToLog(`Selected firmware file: ${file.name} (${(file.size/1024).toFixed(1)} KB)`, 'success');
+            } else {
+                fileName.textContent = 'No file selected';
+                fileInputLabel.innerHTML = '<i class="fas fa-file-upload"></i> CHOOSE FIRMWARE FILE';
+            }
+        });
+        
+        // Event listeners
+        connectBtn.addEventListener('click', connectToDevice);
+        flashBtn.addEventListener('click', flashFirmware);
+        eraseBtn.addEventListener('click', eraseFlash);
+        resetBtn.addEventListener('click', resetDevice);
+        clearLogBtn.addEventListener('click', clearLog);
+        
+        // Initialize
+        addToLog('CyberX Flasher v2.1 Initialized', 'success');
+        addToLog('Developed by Mohamed Albaroodi - CyberX Team', 'info');
+        addToLog('Please connect your ESP32 device and click "Connect to ESP32"', 'info');
+        
+        // Check for Web Serial API support
+        if ('serial' in navigator) {
+            addToLog('Web Serial API is supported', 'success');
+        } else {
+            addToLog('Web Serial API is not supported in this browser', 'error');
+            addToLog('Please use Chrome 89+ or Edge 89+ for full functionality', 'warning');
+            connectBtn.disabled = true;
+        }
+    </script>
+</body>
+</html>

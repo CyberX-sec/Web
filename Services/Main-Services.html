@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>خدمات Cyber X</title>
+  <link rel="stylesheet" href="../Templates/style.css" />
+  <link rel="stylesheet" href="../Templates/services-page.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Almarai&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet" />
+  <script src="../Templates/api-client.js" defer></script>
+  <script src="../Templates/site-branding.js" defer></script>
+  <script src="../Templates/services-page.js" defer></script>
+</head>
+<body>
+  <div id="loader">
+    <div id="loader-text">1%</div>
+  </div>
+
+  <div id="page-content" style="display: none;">
+    <div class="bg"></div>
+
+    <header>
+      <div class="logo-container">
+        <img src="../Mainimages/logo.PNG" alt="Logo" class="logo" />
+      </div>
+
+      <div id="side-tab">
+        <div id="tab-button">☰</div>
+        <div id="tab-menu">
+          <ul>
+            <li><a href="../index.html">الرئيسية</a></li>
+            <li><a href="../admin/index.html">تسجيل الدخول</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+
+    <section id="home" class="hero">
+      <div class="container">
+        <h2 lang="en">Cyber X Services</h2>
+        <p>مجموعة من الأدوات الرقمية التي صممها فريق Cyber X لدعم المجتمع التقني وتسهيل الاختبارات الأمنية.</p>
+        <p class="hero-subtitle" lang="en">Practical security tooling crafted in-house for fast workflows.</p>
+      </div>
+    </section>
+
+    <section id="services" class="section">
+      <div class="container">
+        <h2>الخدمات المتاحة</h2>
+        <p>باستطاعتكم الوصول إلى ألأدوات المباشرة عبر المتصفح، وكل خدمة يمكن تطويرها وتوسيعها مع نمو الفريق.</p>
+        <template id="service-card-template">
+          <article class="service-card">
+            <span class="service-card__badge" hidden></span>
+            <span class="service-card__state state-live" hidden>متاح الآن</span>
+            <h3></h3>
+            <p></p>
+            <ul class="service-card__meta"></ul>
+            <a class="service-card__cta" href="#" target="_blank" rel="noopener noreferrer">
+              <span>اكتشف الخدمة</span>
+              <span aria-hidden="true">›</span>
+            </a>
+            <div class="service-card__footer">
+              <span class="service-card__credit" data-service-credit hidden></span>
+            </div>
+          </article>
+        </template>
+
+        <div class="services-grid" id="services-list" data-empty-text="لا توجد خدمات منشورة حالياً.">
+          <div class="service-card" data-placeholder>
+            <h3>جاري إعداد الخدمات…</h3>
+            <p>ستظهر هنا أدوات Cyber X بمجرد تحميل المحتوى.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section">
+      <div class="container">
+        <h2>تواصل معنا</h2>
+        <p lang="en" data-contact-email data-label="E-mail: " data-default-text="E-mail: cyberx.un@gmail.com">E-mail: cyberx.un@gmail.com</p>
+        <a href="https://github.com/CyberX-sec" target="_blank" rel="noopener noreferrer" class="telegram-btn" lang="en" data-contact-github data-default-text="Github" data-default-href="https://github.com/CyberX-sec">Github</a>
+        <a href="https://t.me/NTU_CyberX" target="_blank" rel="noopener noreferrer" class="telegram-btn" lang="en" data-contact-telegram data-default-text="Telegram" data-default-href="https://t.me/NTU_CyberX">Telegram</a>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <p> All rights reserved exclusively by Cyber X &copy;</p>
+        <h6 lang="en">Van De Cipher</h6>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const tabButton = document.getElementById('tab-button');
+    const tabMenu = document.getElementById('tab-menu');
+
+    tabButton.addEventListener('click', () => {
+      tabMenu.classList.toggle('show');
+    });
+  </script>
+
+  <script>
+    let progress = 1;
+    const loaderText = document.getElementById('loader-text');
+    const loader = document.getElementById('loader');
+    const content = document.getElementById('page-content');
+
+    const interval = setInterval(() => {
+      progress++;
+      loaderText.textContent = progress + '%';
+
+      if (progress >= 100) {
+        clearInterval(interval);
+        loader.style.opacity = 0;
+        setTimeout(() => {
+          loader.style.display = 'none';
+          content.style.display = 'block';
+        }, 800);
+      }
+    }, 5);
+  </script>
+</body>
+</html>

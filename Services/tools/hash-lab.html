@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber X Secure Hash Lab</title>
+  <style>
+    :root {
+      --bg-top: #04070f;
+      --bg-bottom: #0f1b2f;
+      --accent: #58c7ff;
+      --accent-strong: #2e9bff;
+      --text-primary: #f3f6ff;
+      --text-muted: #9eaac2;
+      --card-bg: rgba(9, 17, 31, 0.85);
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      background: radial-gradient(circle at 15% 20%, rgba(88, 199, 255, 0.12), transparent 45%),
+        radial-gradient(circle at 85% 10%, rgba(39, 74, 120, 0.18), transparent 52%),
+        linear-gradient(135deg, var(--bg-top), var(--bg-bottom));
+      color: var(--text-primary);
+      padding: 40px 20px 60px;
+    }
+
+    header {
+      max-width: 980px;
+      margin: 0 auto 36px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.6rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      display: grid;
+      gap: 26px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 26px 45px rgba(5, 10, 22, 0.45);
+      backdrop-filter: blur(12px);
+    }
+
+    .card h2 {
+      font-size: 1.55rem;
+      margin-bottom: 18px;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(7, 13, 24, 0.65);
+      color: var(--text-primary);
+      padding: 16px;
+      font-size: 1rem;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: rgba(88, 199, 255, 0.4);
+      box-shadow: 0 0 0 2px rgba(88, 199, 255, 0.18);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+      align-items: center;
+    }
+
+    select,
+    button,
+    input[type="file"]::file-selector-button {
+      border: none;
+      border-radius: 12px;
+      background: rgba(88, 199, 255, 0.16);
+      color: var(--accent);
+      padding: 12px 18px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    select:hover,
+    button:hover,
+    input[type="file"]::file-selector-button:hover {
+      background: rgba(88, 199, 255, 0.28);
+      transform: translateY(-1px);
+    }
+
+    select {
+      color: var(--text-primary);
+      background: rgba(7, 13, 24, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding-right: 32px;
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #04263f;
+    }
+
+    .output {
+      margin-top: 22px;
+      background: rgba(5, 10, 18, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 18px;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      position: relative;
+      overflow-x: auto;
+    }
+
+    .output strong {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .output button {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(88, 199, 255, 0.18);
+      color: var(--accent);
+      font-size: 0.8rem;
+    }
+
+    .output button:hover {
+      background: rgba(88, 199, 255, 0.32);
+    }
+
+    .file-drop {
+      margin-top: 10px;
+      padding: 18px;
+      border-radius: 14px;
+      border: 1px dashed rgba(88, 199, 255, 0.3);
+      background: rgba(7, 13, 24, 0.45);
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .file-drop.dragover {
+      border-color: var(--accent);
+      background: rgba(88, 199, 255, 0.12);
+      color: var(--text-primary);
+    }
+
+    .status {
+      margin-top: 16px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    footer {
+      margin-top: 36px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 640px) {
+      header h1 {
+        font-size: 2.2rem;
+      }
+
+      .card {
+        padding: 24px;
+      }
+
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      select,
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Secure Hash Lab</h1>
+    <p>Generate cryptographic digests for text or files without leaving your browser. Nothing leaves this page.</p>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="text-digest-heading">
+      <h2 id="text-digest-heading">Text digest</h2>
+      <label for="hash-input">Message or sample payload</label>
+      <textarea id="hash-input" placeholder="Paste or type the content you want to hash"></textarea>
+      <div class="controls">
+        <select id="hash-algorithm" aria-label="Hash algorithm">
+          <option value="SHA-256">SHA-256</option>
+          <option value="SHA-512">SHA-512</option>
+          <option value="SHA-384">SHA-384</option>
+          <option value="SHA-1">SHA-1</option>
+        </select>
+        <button type="button" class="primary" id="hash-button">Generate digest</button>
+        <button type="button" id="clear-button">Clear</button>
+      </div>
+      <div class="output" id="hash-output" hidden>
+        <strong id="hash-label">Digest</strong>
+        <button type="button" id="copy-hash">Copy</button>
+        <pre id="hash-result"></pre>
+      </div>
+      <div class="status" id="text-status">Awaiting input…</div>
+    </section>
+
+    <section class="card" aria-labelledby="file-digest-heading">
+      <h2 id="file-digest-heading">File digest</h2>
+      <label for="file-input">Drop a file or browse to calculate its hash locally</label>
+      <div class="file-drop" id="file-drop">Drag and drop a file here or click to browse.</div>
+      <input type="file" id="file-input" hidden>
+      <div class="controls">
+        <select id="file-hash-algorithm" aria-label="File hash algorithm">
+          <option value="SHA-256">SHA-256</option>
+          <option value="SHA-512">SHA-512</option>
+          <option value="SHA-384">SHA-384</option>
+          <option value="SHA-1">SHA-1</option>
+        </select>
+        <button type="button" class="primary" id="file-hash-button">Hash file</button>
+      </div>
+      <div class="output" id="file-output" hidden>
+        <strong id="file-hash-label">File digest</strong>
+        <button type="button" id="copy-file-hash">Copy</button>
+        <pre id="file-hash-result"></pre>
+      </div>
+      <div class="status" id="file-status">No file selected yet.</div>
+    </section>
+  </main>
+
+  <footer>
+    Built by Abdallah Yasir for Cyber X.
+  </footer>
+
+  <script>
+    const hashInput = document.getElementById('hash-input');
+    const hashAlgorithm = document.getElementById('hash-algorithm');
+    const hashButton = document.getElementById('hash-button');
+    const clearButton = document.getElementById('clear-button');
+    const hashOutput = document.getElementById('hash-output');
+    const hashResult = document.getElementById('hash-result');
+    const hashLabel = document.getElementById('hash-label');
+    const copyHashButton = document.getElementById('copy-hash');
+    const textStatus = document.getElementById('text-status');
+
+    const fileDrop = document.getElementById('file-drop');
+    const fileInput = document.getElementById('file-input');
+    const fileHashAlgorithm = document.getElementById('file-hash-algorithm');
+    const fileHashButton = document.getElementById('file-hash-button');
+    const fileOutput = document.getElementById('file-output');
+    const fileHashResult = document.getElementById('file-hash-result');
+    const fileHashLabel = document.getElementById('file-hash-label');
+    const copyFileHashButton = document.getElementById('copy-file-hash');
+    const fileStatus = document.getElementById('file-status');
+
+    function toHex(buffer) {
+      return Array.from(new Uint8Array(buffer)).map((byte) => byte.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function digestMessage(algo, data) {
+      if (!window.crypto || !window.crypto.subtle) {
+        throw new Error('Web Crypto API is not available in this browser.');
+      }
+      const digest = await window.crypto.subtle.digest(algo, data);
+      return toHex(digest);
+    }
+
+    async function handleHashText() {
+      const message = hashInput.value;
+      if (!message) {
+        textStatus.textContent = 'Provide text to hash.';
+        hashOutput.hidden = true;
+        return;
+      }
+      const algo = hashAlgorithm.value;
+      textStatus.textContent = 'Hashing using ' + algo + '…';
+      try {
+        const encoded = new TextEncoder().encode(message);
+        const digest = await digestMessage(algo, encoded);
+        hashResult.textContent = digest;
+        hashLabel.textContent = algo + ' digest';
+        hashOutput.hidden = false;
+        textStatus.textContent = 'Digest computed locally. Copy or archive as needed.';
+      } catch (error) {
+        textStatus.textContent = 'Unable to hash text: ' + error.message;
+        hashOutput.hidden = true;
+      }
+    }
+
+    function clearText() {
+      hashInput.value = '';
+      hashOutput.hidden = true;
+      textStatus.textContent = 'Awaiting input…';
+    }
+
+    async function copyToClipboard(text, statusElement) {
+      try {
+        await navigator.clipboard.writeText(text);
+        statusElement.textContent = 'Hash copied to clipboard.';
+      } catch (error) {
+        statusElement.textContent = 'Copy failed: ' + error.message;
+      }
+    }
+
+    function openFileDialog() {
+      fileInput.click();
+    }
+
+    function handleDrop(event) {
+      event.preventDefault();
+      fileDrop.classList.remove('dragover');
+      if (event.dataTransfer.files && event.dataTransfer.files[0]) {
+        fileInput.files = event.dataTransfer.files;
+        fileStatus.textContent = 'Selected file: ' + event.dataTransfer.files[0].name;
+      }
+    }
+
+    function handleDragOver(event) {
+      event.preventDefault();
+      fileDrop.classList.add('dragover');
+    }
+
+    function handleDragLeave(event) {
+      event.preventDefault();
+      fileDrop.classList.remove('dragover');
+    }
+
+    function handleFileSelection(event) {
+      if (event.target.files && event.target.files[0]) {
+        fileStatus.textContent = 'Selected file: ' + event.target.files[0].name;
+      }
+    }
+
+    async function hashSelectedFile() {
+      const file = fileInput.files && fileInput.files[0];
+      if (!file) {
+        fileStatus.textContent = 'Choose a file to hash.';
+        fileOutput.hidden = true;
+        return;
+      }
+      const algo = fileHashAlgorithm.value;
+      fileStatus.textContent = 'Hashing ' + file.name + ' using ' + algo + '…';
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const digest = await digestMessage(algo, arrayBuffer);
+        fileHashResult.textContent = digest;
+        fileHashLabel.textContent = file.name + ' (' + algo + ')';
+        fileOutput.hidden = false;
+        fileStatus.textContent = 'Digest ready. Compare against trusted checksums to validate integrity.';
+      } catch (error) {
+        fileStatus.textContent = 'Unable to hash file: ' + error.message;
+        fileOutput.hidden = true;
+      }
+    }
+
+    hashButton.addEventListener('click', handleHashText);
+    clearButton.addEventListener('click', clearText);
+    copyHashButton.addEventListener('click', () => {
+      if (!hashOutput.hidden) {
+        copyToClipboard(hashResult.textContent, textStatus);
+      }
+    });
+
+    fileDrop.addEventListener('click', openFileDialog);
+    fileDrop.addEventListener('dragover', handleDragOver);
+    fileDrop.addEventListener('dragleave', handleDragLeave);
+    fileDrop.addEventListener('drop', handleDrop);
+    fileInput.addEventListener('change', handleFileSelection);
+    fileHashButton.addEventListener('click', hashSelectedFile);
+    copyFileHashButton.addEventListener('click', () => {
+      if (!fileOutput.hidden) {
+        copyToClipboard(fileHashResult.textContent, fileStatus);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="../Articles-Templates/Main.css" />
   <link href="https://fonts.googleapis.com/css2?family=Almarai&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet" />
+  <script src="../Templates/api-client.js" defer></script>
+  <script src="../Templates/site-branding.js" defer></script>
+  <script src="../Templates/content-list.js" defer></script>
 </head>
 <body>
 
@@ -35,6 +38,7 @@
           <li><a href="#lectures">الدروس</a></li>
           <li><a href="#blog">المقالات</a></li>
           <li><a href="#team">الفريق</a></li> -->
+          <li><a href="../Services/Main-Services.html">الخدمات</a></li>
           <li><a href="#contact">تواصل معنا</a></li>
         </ul>
       </div>
@@ -52,36 +56,24 @@
 <section id="Projects" class="section">
     <div class="container">
       <!-- <h2 lang="en" > titles </h2> -->
+      <template id="content-card-template">
+        <div class="article-card">
+          <img src="" alt="" loading="lazy">
+          <h3></h3>
+          <p></p>
+          <a href="#" class="read-more-btn">اقرأ المزيد</a>
+        </div>
+      </template>
+
       <section id="projects" class="section">
         <div class="container">
-            <div class="projects">
-
-                <div class="article-card">
-                    <h3>ما هو PUF؟</h3>
-                    <p>كل شريحة تحكي قصة: بصمتها الفيزيائية تصبح مفتاحك الرقمي.</p>
-                    <a href="puf.html" target="_blank" class="read-more-btn">اقرأ المزيد</a>
-                </div>
-
-                <!-- <div class="article-card">
-                    <h3>مخاطر الباركود</h3>
-                    <p>كل باركود قد يخفي فخاً رقمياً، لا تثق بما يبدو بسيطاً.</p>
-                    <a href="Barcode.html" target="_blank" class="read-more-btn">اقرأ المزيد</a>
-                </div> -->
-
-                <div class="article-card">
-                    <h3>من Probe إلى Handshake: قصة اتصال الـ Wi-Fi</h3>
-                    <p>كل مرة تتصل بالـ Wi-Fi، جهازك يخوض محادثة سرية مع الشبكة.</p>
-                    <a href="WIFI-Connection.html" target="_blank" class="read-more-btn">اقرأ المزيد</a>
-                </div>
-
-                <div class="article-card">
-                    <h3>تحديث مؤجل ... اختراق مؤكد</h3>
-                    <p>كل تأخير في التحديث، فرصة لمن يجلس في الظلام ويكتب النهاية.</p>
-                    <a href="RCE-Story.html" target="_blank" class="read-more-btn">اقرأ المزيد</a>
-                </div>
-
-
+          <div class="projects" id="articles-list" data-content-source="articles" data-empty-text="لا توجد مقالات منشورة حالياً.">
+            <div class="article-card" data-placeholder>
+              <h3>جاري تحميل المقالات…</h3>
+              <p>سيظهر هنا أحدث ما نشره الفريق بمجرد توفر الاتصال بالخادم.</p>
+              <a href="#" class="read-more-btn" aria-disabled="true">اقرأ المزيد</a>
             </div>
+          </div>
         </div>
       </section>
     </div>
@@ -90,10 +82,10 @@
   <section id="contact" class="section">
     <div class="container">
       <h2>تواصل معنا</h2>
-      <p lang="en" >E-mail: cyberx.un@gmail.com</p>
+      <p lang="en" data-contact-email data-label="E-mail: " data-default-text="E-mail: cyberx.un@gmail.com">E-mail: cyberx.un@gmail.com</p>
       <!-- <p lang="en" >GitHub: github.com/CyberX-sec</p> -->
-      <a href="https://github.com/CyberX-sec" target="_blank" class="telegram-btn" lang="en" >Github</a>
-      <a href="https://t.me/NTU_CyberX" target="_blank" class="telegram-btn" lang="en" >Telegram</a>
+      <a href="https://github.com/CyberX-sec" target="_blank" rel="noopener noreferrer" class="telegram-btn" lang="en" data-contact-github data-default-text="Github" data-default-href="https://github.com/CyberX-sec">Github</a>
+      <a href="https://t.me/NTU_CyberX" target="_blank" rel="noopener noreferrer" class="telegram-btn" lang="en" data-contact-telegram data-default-text="Telegram" data-default-href="https://t.me/NTU_CyberX">Telegram</a>
       <!-- <a href="" target="_blank" class="telegram-btn" lang="en">instagram</a> -->
     </div>
   </section>

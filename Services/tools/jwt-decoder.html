@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber X JWT Token Inspector</title>
+  <style>
+    :root {
+      --bg-one: #04080f;
+      --bg-two: #101b2e;
+      --accent: #58c7ff;
+      --accent-strong: #2ea0ff;
+      --text-primary: #f4f6ff;
+      --text-muted: #9da7c0;
+      --card-bg: rgba(10, 18, 31, 0.84);
+      --border: rgba(255, 255, 255, 0.08);
+      --success: #3fe0a8;
+      --warning: #ffd166;
+      --danger: #ff6b81;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 20%, rgba(88, 199, 255, 0.12), transparent 45%),
+        radial-gradient(circle at 80% 10%, rgba(53, 87, 142, 0.16), transparent 50%),
+        linear-gradient(135deg, var(--bg-one), var(--bg-two));
+      color: var(--text-primary);
+      padding: 40px 20px 60px;
+    }
+
+    header {
+      max-width: 960px;
+      margin: 0 auto 32px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.6rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 30px 55px rgba(4, 9, 18, 0.45);
+      backdrop-filter: blur(12px);
+    }
+
+    .card h2 {
+      font-size: 1.55rem;
+      margin-bottom: 16px;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 160px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(7, 13, 24, 0.65);
+      color: var(--text-primary);
+      padding: 16px;
+      font-size: 1rem;
+      line-height: 1.4;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: rgba(88, 199, 255, 0.4);
+      box-shadow: 0 0 0 2px rgba(88, 199, 255, 0.18);
+    }
+
+    .controls {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      color: #04263f;
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 30px rgba(88, 199, 255, 0.3);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(88, 199, 255, 0.12);
+      border: 1px solid rgba(88, 199, 255, 0.22);
+      color: var(--accent);
+      font-size: 0.85rem;
+      letter-spacing: 0.03em;
+    }
+
+    .output-grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .output-card {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .output-card h3 {
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+      color: var(--text-muted);
+    }
+
+    pre {
+      font-family: "Courier New", Courier, monospace;
+      font-size: 0.93rem;
+      color: var(--text-primary);
+      line-height: 1.5;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .status {
+      margin-top: 16px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+    }
+
+    .badge.success {
+      background: rgba(63, 224, 168, 0.12);
+      border: 1px solid rgba(63, 224, 168, 0.35);
+      color: var(--success);
+    }
+
+    .badge.warning {
+      background: rgba(255, 209, 102, 0.12);
+      border: 1px solid rgba(255, 209, 102, 0.35);
+      color: var(--warning);
+    }
+
+    .badge.danger {
+      background: rgba(255, 107, 129, 0.12);
+      border: 1px solid rgba(255, 107, 129, 0.35);
+      color: var(--danger);
+    }
+
+    footer {
+      margin-top: 36px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 640px) {
+      header h1 {
+        font-size: 2.2rem;
+      }
+
+      .card {
+        padding: 24px;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>JWT Token Inspector</h1>
+    <p>Peel apart JSON Web Tokens locally, visualize claims, and validate signature coverage without uploading secrets.</p>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="input-heading">
+      <h2 id="input-heading">Decode a token</h2>
+      <textarea id="jwt-input" placeholder="Paste a JWT here (header.payload.signature)"></textarea>
+      <div class="controls">
+        <button type="button" id="decode-button">Decode JWT</button>
+      </div>
+      <div class="pill-row" id="jwt-meta" hidden>
+        <span class="pill" id="algorithm-pill"></span>
+        <span class="pill" id="type-pill"></span>
+        <span class="pill" id="signature-pill"></span>
+      </div>
+      <div class="status" id="jwt-status">Awaiting token input…</div>
+    </section>
+
+    <section class="card" aria-live="polite" aria-labelledby="output-heading">
+      <h2 id="output-heading">Decoded structure</h2>
+      <div class="output-grid">
+        <article class="output-card">
+          <h3>Header</h3>
+          <pre id="header-output">{}</pre>
+        </article>
+        <article class="output-card">
+          <h3>Payload</h3>
+          <pre id="payload-output">{}</pre>
+        </article>
+        <article class="output-card">
+          <h3>Signature (base64url)</h3>
+          <pre id="signature-output">(none)</pre>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Developed by Abdallah Yasir for Cyber X.
+  </footer>
+
+  <script>
+    const input = document.getElementById('jwt-input');
+    const decodeButton = document.getElementById('decode-button');
+    const headerOutput = document.getElementById('header-output');
+    const payloadOutput = document.getElementById('payload-output');
+    const signatureOutput = document.getElementById('signature-output');
+    const status = document.getElementById('jwt-status');
+    const metaRow = document.getElementById('jwt-meta');
+    const algorithmPill = document.getElementById('algorithm-pill');
+    const typePill = document.getElementById('type-pill');
+    const signaturePill = document.getElementById('signature-pill');
+
+    function base64UrlDecode(segment) {
+      const normalized = segment.replace(/-/g, '+').replace(/_/g, '/');
+      const padding = normalized.length % 4 === 2 ? '==' : normalized.length % 4 === 3 ? '=' : normalized.length % 4 === 1 ? '===' : '';
+      const base64 = normalized + padding;
+      try {
+        return atob(base64);
+      } catch (error) {
+        throw new Error('Unable to decode base64url segment.');
+      }
+    }
+
+    function parseSegment(segment) {
+      if (!segment) {
+        return {};
+      }
+      const decoded = base64UrlDecode(segment);
+      try {
+        return JSON.parse(decoded);
+      } catch (error) {
+        throw new Error('Segment is not valid JSON.');
+      }
+    }
+
+    function formatJson(value) {
+      try {
+        return JSON.stringify(value, null, 2);
+      } catch (error) {
+        return '{}';
+      }
+    }
+
+    function updateMeta(header, signature) {
+      const algorithm = header.alg || 'alg missing';
+      const type = header.typ || 'typ missing';
+      const hasSignature = Boolean(signature && signature.length);
+
+      algorithmPill.textContent = 'alg: ' + algorithm;
+      typePill.textContent = 'typ: ' + type;
+      signaturePill.textContent = hasSignature ? 'signature present' : 'unsigned';
+      signaturePill.className = 'pill';
+      signaturePill.classList.add('badge');
+      signaturePill.classList.add(hasSignature ? 'success' : 'warning');
+      metaRow.hidden = false;
+    }
+
+    function decodeJwt() {
+      const token = input.value.trim();
+      if (!token) {
+        status.textContent = 'Paste a JWT to decode it.';
+        metaRow.hidden = true;
+        headerOutput.textContent = '{}';
+        payloadOutput.textContent = '{}';
+        signatureOutput.textContent = '(none)';
+        return;
+      }
+      const parts = token.split('.');
+      if (parts.length < 2 || parts.length > 3) {
+        status.textContent = 'Unexpected token format. A JWT must contain header, payload, and optional signature segments.';
+        metaRow.hidden = true;
+        return;
+      }
+      try {
+        const header = parseSegment(parts[0]);
+        const payload = parseSegment(parts[1]);
+        const signature = parts[2] || '';
+
+        headerOutput.textContent = formatJson(header);
+        payloadOutput.textContent = formatJson(payload);
+        signatureOutput.textContent = signature || '(none)';
+        updateMeta(header, signature);
+
+        if (!signature) {
+          status.textContent = 'Token decoded. This JWT is unsigned or uses the none algorithm.';
+        } else {
+          status.textContent = 'Token decoded. Validate the signature separately with the issuer key.';
+        }
+      } catch (error) {
+        status.textContent = error.message;
+        metaRow.hidden = true;
+      }
+    }
+
+    decodeButton.addEventListener('click', decodeJwt);
+    input.addEventListener('keyup', (event) => {
+      if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+        decodeJwt();
+      }
+    });
+  </script>
+</body>
+</html>

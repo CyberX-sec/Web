@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber X – Control Center</title>
+  <link href="https://fonts.googleapis.com/css2?family=Almarai&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../Templates/admin.css">
+  <script src="../Templates/api-client.js" defer></script>
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <div id="loader">
+    <div id="loader-text">1%</div>
+  </div>
+
+  <div id="page-content" class="admin-app" style="display: none;">
+    <div class="bg"></div>
+
+    <header class="admin-header">
+      <div class="header-title">
+        <h1>Access point</h1>
+      </div>
+      <div class="header-info">
+        <div class="user-chip" data-profile-chip>
+          <span class="user-name" data-profile-name>Operators Gate</span>
+          <span class="user-role" data-profile-role></span>
+        </div>
+        <button id="logout-button" class="ghost" hidden>Sign Out<span class="translation" dir="rtl" lang="ar">تسجيل الخروج</span></button>
+      </div>
+    </header>
+
+    <main class="admin-shell">
+      <section id="login-view" class="card auth-card">
+        <h1>Sign In</h1>
+        <p class="subtitle">Please sign in to manage the Cyber X content</p>
+        <form id="login-form" class="stack" novalidate>
+          <label class="field">
+            <span>
+              <span class="label-main">Email</span>
+              <span class="translation" dir="rtl" lang="ar">البريد الإلكتروني</span>
+            </span>
+            <input type="email" name="email" required autocomplete="username" placeholder="Do Not Tell Me You Forgot It">
+          </label>
+          <label class="field">
+            <span>
+              <span class="label-main">Password</span>
+              <span class="translation" dir="rtl" lang="ar">كلمة المرور</span>
+            </span>
+            <input type="password" name="password" required autocomplete="current-password" placeholder="Strong Password">
+          </label>
+          <button type="submit" class="primary">Sign In<span class="translation" dir="rtl" lang="ar">تسجيل الدخول</span></button>
+          <p class="form-message" id="login-message" role="alert"></p>
+        </form>
+      </section>
+
+      <section id="dashboard-view" class="dashboard" hidden>
+        <div class="dashboard-hero">
+          <h1>Dashboard</h1>
+          <p>Manage educational content and team channels.</p>
+          <p id="current-user"></p>
+        </div>
+
+        <div class="dashboard-body">
+          <nav class="tabs" role="tablist">
+            <button type="button" class="tab active" data-target="overview" role="tab">Overview<span class="translation" dir="rtl" lang="ar">نظرة عامة</span></button>
+            <button type="button" class="tab" data-target="profile" role="tab">Profile<span class="translation" dir="rtl" lang="ar">الملف الشخصي</span></button>
+            <button type="button" class="tab" data-target="channels" data-role-required="admin" role="tab">Channels<span class="translation" dir="rtl" lang="ar">القنوات</span></button>
+            <button type="button" class="tab" data-target="projects" data-role-required="editor" role="tab">Projects<span class="translation" dir="rtl" lang="ar">المشاريع</span></button>
+            <button type="button" class="tab" data-target="articles" data-role-required="editor" role="tab">Articles<span class="translation" dir="rtl" lang="ar">المقالات</span></button>
+            <button type="button" class="tab" data-target="lectures" data-role-required="admin" role="tab">Lectures<span class="translation" dir="rtl" lang="ar">المحاضرات</span></button>
+            <button type="button" class="tab" data-target="team" data-role-required="super-admin" role="tab">Team<span class="translation" dir="rtl" lang="ar">الفريق</span></button>
+            <button type="button" class="tab" data-target="users" data-role-required="super-admin" role="tab">Users<span class="translation" dir="rtl" lang="ar">المستخدمون</span></button>
+            <button type="button" class="tab" data-target="settings" data-role-required="super-admin" role="tab">Site Controls<span class="translation" dir="rtl" lang="ar">التحكم بالموقع</span></button>
+            <button type="button" class="tab" data-target="activity" data-role-required="admin" role="tab">Activity Log<span class="translation" dir="rtl" lang="ar">سجل النشاط</span></button>
+          </nav>
+
+          <div class="panels">
+            <section class="panel active" data-panel="overview">
+              <div class="profile-summary" data-profile-summary>
+                <div class="profile-meta">
+                  <h2 data-profile-display>Welcome to Cyber X<span class="translation" dir="rtl" lang="ar">مرحباً بك في Cyber X</span></h2>
+                  <p class="profile-bio" data-profile-bio>Select a section above to add or update content.<span class="translation" dir="rtl" lang="ar">اختر أحد الأقسام أعلاه لإضافة أو تعديل المحتوى.</span></p>
+                  <div class="profile-tags">
+                    <div class="tag-list" data-profile-badges></div>
+                    <div class="tag-list secondary" data-profile-certificates></div>
+                  </div>
+                </div>
+              </div>
+              <div class="overview-hints">
+                <p>You can manage projects, articles, and lectures via the tabs. Remember to update your profile to reflect changes publicly.<span class="translation" dir="rtl" lang="ar">يمكنك إدارة المشاريع والمقالات والمحاضرات من خلال التبويبات. تذكر تحديث ملفك الشخصي ليظهر للجميع.</span></p>
+              </div>
+            </section>
+
+            <section class="panel" data-panel="profile" hidden>
+              <h2>Edit Profile<span class="translation" dir="rtl" lang="ar">تعديل الملف الشخصي</span></h2>
+              <form class="stack" data-form="profile" novalidate>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Display Name</span>
+                      <span class="translation" dir="rtl" lang="ar">الاسم المعروض</span>
+                    </span>
+                    <input type="text" name="displayName" required>
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Avatar URL</span>
+                      <span class="translation" dir="rtl" lang="ar">رابط الصورة الشخصية</span>
+                    </span>
+                    <div class="file-input" data-upload-field data-upload-folder="avatars" data-upload-success="تم تحديث الصورة الشخصية.">
+                      <input type="url" name="avatarUrl" placeholder="/Team-images/avatar.png">
+                      <div class="file-actions">
+                        <input type="file" accept="image/*" data-file-control hidden>
+                        <button type="button" class="secondary" data-action="select-file">Upload Image<span class="translation" dir="rtl" lang="ar">رفع صورة</span></button>
+                        <button type="button" class="ghost" data-action="clear-file">Clear<span class="translation" dir="rtl" lang="ar">مسح</span></button>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Profile Slug</span>
+                      <small>Used in profile URL (lowercase letters and dashes only)</small>
+                      <span class="translation" dir="rtl" lang="ar">معرّف الملف الشخصي</span>
+                      <small class="translation" dir="rtl" lang="ar">يظهر في رابط الملف (استخدم الحروف الصغيرة والشرطات فقط)</small>
+                    </span>
+                    <input type="text" name="profileSlug" placeholder="abdallah-yasir">
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Profile Headline</span>
+                      <small>Short role or focus shown on the card</small>
+                      <span class="translation" dir="rtl" lang="ar">اللقب المهني</span>
+                      <small class="translation" dir="rtl" lang="ar">وصف قصير يظهر على البطاقة</small>
+                    </span>
+                    <input type="text" name="profileHeadline" placeholder="Offensive Security | Web Dev">
+                  </label>
+                </div>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Biography</span>
+                    <span class="translation" dir="rtl" lang="ar">نبذة تعريفية</span>
+                  </span>
+                  <textarea name="bio" rows="4" placeholder="A short bio that appears on your public channel."></textarea>
+                </label>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Profile Hero Image</span>
+                    <span class="translation" dir="rtl" lang="ar">صورة الغلاف للملف الشخصي</span>
+                  </span>
+                  <div class="file-input" data-upload-field data-upload-folder="profile-hero">
+                    <input type="url" name="profileHeroImage" placeholder="/media/uploads/general/profile-hero.jpg">
+                    <div class="file-actions">
+                      <input type="file" accept="image/*" data-file-control hidden>
+                      <button type="button" class="secondary" data-action="select-file">Upload Image<span class="translation" dir="rtl" lang="ar">رفع صورة</span></button>
+                      <button type="button" class="ghost" data-action="clear-file">Clear<span class="translation" dir="rtl" lang="ar">مسح</span></button>
+                    </div>
+                  </div>
+                </label>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Badges</span>
+                      <small>One badge per line</small>
+                      <span class="translation" dir="rtl" lang="ar">الشارات</span>
+                      <small class="translation" dir="rtl" lang="ar">اكتب كل شارة في سطر منفصل</small>
+                    </span>
+                    <textarea name="badges" rows="4" placeholder="Founder of the team&#10;Security Researcher"></textarea>
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Certificates / Achievements</span>
+                      <small>Format: Title | URL (optional)</small>
+                      <span class="translation" dir="rtl" lang="ar">الشهادات / الإنجازات</span>
+                      <small class="translation" dir="rtl" lang="ar">الصيغة: الاسم | الرابط (اختياري)</small>
+                    </span>
+                    <textarea name="certificates" rows="4" placeholder="CompTIA Security+&#10;Cisco CCNA | https://example.com"></textarea>
+                  </label>
+                </div>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Contact Links</span>
+                    <small>Format: Label | URL (one per line)</small>
+                    <span class="translation" dir="rtl" lang="ar">روابط التواصل</span>
+                    <small class="translation" dir="rtl" lang="ar">الصيغة: الاسم | الرابط (كل رابط في سطر)</small>
+                  </span>
+                  <textarea name="profileContactLinks" rows="3" placeholder="Telegram | https://t.me/username&#10;GitHub | https://github.com/username"></textarea>
+                </label>
+                <label class="checkbox">
+                  <input type="checkbox" name="profileVisible">
+                  <span>
+                    <span class="label-main">Display on public team page</span>
+                    <span class="translation" dir="rtl" lang="ar">إظهار في صفحة الفريق العامة</span>
+                  </span>
+                </label>
+                <div class="actions">
+                  <button type="submit" class="primary">Save Profile<span class="translation" dir="rtl" lang="ar">حفظ الملف</span></button>
+                  <button type="button" class="ghost" data-action="reset">Reset<span class="translation" dir="rtl" lang="ar">إعادة التعيين</span></button>
+                </div>
+                <p class="form-message" data-message="profile" role="alert"></p>
+              </form>
+            </section>
+
+            <section class="panel" data-panel="channels" data-role-required="admin" hidden>
+              <h2>Manage Channels<span class="translation" dir="rtl" lang="ar">إدارة القنوات</span></h2>
+              <p class="subtitle">Only channel owners can edit their channels. The super admin can reassign ownership when needed.<span class="translation" dir="rtl" lang="ar">لا يمكن لغير المالك تعديل القناة. يمكن للمشرف الأعلى تغيير المالك عند الحاجة.</span></p>
+              <form class="stack" data-form="channels" novalidate>
+                <input type="hidden" name="id">
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Channel Name</span>
+                      <span class="translation" dir="rtl" lang="ar">اسم القناة</span>
+                    </span>
+                    <input type="text" name="name" required>
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Slug</span>
+                      <span class="translation" dir="rtl" lang="ar">المعرّف</span>
+                    </span>
+                    <input type="text" name="slug" required placeholder="abdallah-channel">
+                  </label>
+                </div>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Description</span>
+                    <span class="translation" dir="rtl" lang="ar">الوصف</span>
+                  </span>
+                  <textarea name="description" rows="4" placeholder="A short channel description."></textarea>
+                </label>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Hero Title</span>
+                      <span class="translation" dir="rtl" lang="ar">عنوان الواجهة</span>
+                    </span>
+                    <input type="text" name="heroTitle" placeholder="Operating Systems">
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Hero Subtitle</span>
+                      <span class="translation" dir="rtl" lang="ar">وصف الواجهة</span>
+                    </span>
+                    <input type="text" name="heroSubtitle" placeholder="By Abdallah Yasser">
+                  </label>
+                </div>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Cover Image</span>
+                    <span class="translation" dir="rtl" lang="ar">صورة الغلاف</span>
+                  </span>
+                  <div class="file-input" data-upload-field data-upload-folder="channel-covers">
+                    <input type="url" name="coverImage" placeholder="/media/lectures/cover.jpg">
+                    <div class="file-actions">
+                      <input type="file" accept="image/*" data-file-control hidden>
+                      <button type="button" class="secondary" data-action="select-file">Upload Image<span class="translation" dir="rtl" lang="ar">رفع صورة</span></button>
+                      <button type="button" class="ghost" data-action="clear-file">Clear<span class="translation" dir="rtl" lang="ar">مسح</span></button>
+                    </div>
+                  </div>
+                </label>
+                <label class="field" data-owner-field>
+                  <span>
+                    <span class="label-main">Channel Owner</span>
+                    <small>Visible to super admins only</small>
+                    <span class="translation" dir="rtl" lang="ar">مالك القناة</span>
+                    <small class="translation" dir="rtl" lang="ar">مرئي للمشرف الأعلى فقط</small>
+                  </span>
+                  <select name="ownerId">
+                    <option value="">— Select owner —</option>
+                  </select>
+                </label>
+                <div class="actions">
+                  <button type="submit" class="primary">Save Channel<span class="translation" dir="rtl" lang="ar">حفظ القناة</span></button>
+                  <button type="button" class="ghost" data-action="reset">Clear<span class="translation" dir="rtl" lang="ar">تفريغ الحقول</span></button>
+                </div>
+                <p class="form-message" data-message="channels" role="alert"></p>
+              </form>
+              <div class="list" data-list="channels"></div>
+            </section>
+
+            <section class="panel" data-panel="projects" data-role-required="editor" hidden>
+              <h2>Manage Projects<span class="translation" dir="rtl" lang="ar">إدارة المشاريع</span></h2>
+              <form class="stack" data-form="projects" novalidate>
+                <input type="hidden" name="id">
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Title</span>
+                      <span class="translation" dir="rtl" lang="ar">العنوان</span>
+                    </span>
+                    <input type="text" name="title" required>
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Slug</span>
+                      <span class="translation" dir="rtl" lang="ar">المعرّف</span>
+                    </span>
+                    <input type="text" name="slug" required placeholder="project-slug">
+                  </label>
+                </div>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Summary</span>
+                    <small>Appears beneath the title</small>
+                    <span class="translation" dir="rtl" lang="ar">الملخص</span>
+                    <small class="translation" dir="rtl" lang="ar">يظهر أسفل العنوان</small>
+                  </span>
+                  <textarea name="summary" rows="3"></textarea>
+                </label>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Content</span>
+                    <small>HTML or Markdown</small>
+                    <span class="translation" dir="rtl" lang="ar">المحتوى</span>
+                    <small class="translation" dir="rtl" lang="ar">HTML أو Markdown</small>
+                  </span>
+                  <textarea name="content" rows="6"></textarea>
+                </label>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Detail URL</span>
+                      <small>Leave empty to use default template</small>
+                      <span class="translation" dir="rtl" lang="ar">رابط التفاصيل</span>
+                      <small class="translation" dir="rtl" lang="ar">اتركه فارغاً لاستخدام القالب الافتراضي</small>
+                    </span>
+                    <input type="url" name="detailUrl" placeholder="https://example.com/project">
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Cover Image</span>
+                      <span class="translation" dir="rtl" lang="ar">صورة الغلاف</span>
+                    </span>
+                    <div class="file-input" data-upload-field data-upload-folder="project-covers">
+                      <input type="url" name="coverImage" placeholder="/media/projects/project-cover.jpg">
+                      <div class="file-actions">
+                        <input type="file" accept="image/*" data-file-control hidden>
+                        <button type="button" class="secondary" data-action="select-file">Upload Image<span class="translation" dir="rtl" lang="ar">رفع صورة</span></button>
+                        <button type="button" class="ghost" data-action="clear-file">Clear<span class="translation" dir="rtl" lang="ar">مسح</span></button>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+                <div class="form-divider" role="presentation"></div>
+                <h3 class="form-subheading">Media Attachments<span class="translation" dir="rtl" lang="ar">الوسائط المرفقة</span></h3>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Featured Video URL</span>
+                      <small>Optional embed link (YouTube, Vimeo, etc.)</small>
+                      <span class="translation" dir="rtl" lang="ar">رابط الفيديو المميز</span>
+                      <small class="translation" dir="rtl" lang="ar">اختياري (يمكن استخدام روابط YouTube أو Vimeo)</small>
+                    </span>
+                    <input type="url" name="videoUrl" placeholder="https://youtu.be/xyz">
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Gallery Image URLs</span>
+                      <small>Add one URL per line</small>
+                      <span class="translation" dir="rtl" lang="ar">روابط صور المعرض</span>
+                      <small class="translation" dir="rtl" lang="ar">أضف كل رابط في سطر منفصل</small>
+                    </span>
+                    <textarea name="galleryImages" rows="4" placeholder="/media/uploads/general/project-image.jpg&#10;https://example.com/another.jpg"></textarea>
+                  </label>
+                </div>
+                <div class="file-input media-upload" data-upload-field data-upload-folder="project-gallery" data-upload-success="تم رفع الصورة وإضافتها إلى المعرض." data-upload-append-target="[name='galleryImages']">
+                  <input type="url" name="__projectGalleryUpload" data-upload-input placeholder="آخر رابط صورة مرفوعة" readonly>
+                  <div class="file-actions">
+                    <input type="file" accept="image/*" data-file-control hidden>
+                    <button type="button" class="secondary" data-action="select-file">Upload Image<span class="translation" dir="rtl" lang="ar">رفع صورة</span></button>
+                    <button type="button" class="ghost" data-action="clear-file">Clear<span class="translation" dir="rtl" lang="ar">مسح</span></button>
+                  </div>
+                </div>
+                <p class="media-upload-note">Uploaded images are added to the gallery list automatically.<span class="translation" dir="rtl" lang="ar">يتم إضافة الصور التي يتم رفعها تلقائياً إلى قائمة المعرض.</span></p>
+                <label class="checkbox">
+                  <input type="checkbox" name="isPublished">
+                  <span>
+                    <span class="label-main">Publish this project</span>
+                    <span class="translation" dir="rtl" lang="ar">نشر هذا المشروع</span>
+                  </span>
+                </label>
+                <div class="actions">
+                  <button type="submit" class="primary">Save<span class="translation" dir="rtl" lang="ar">حفظ</span></button>
+                  <button type="button" class="ghost" data-action="reset">Clear<span class="translation" dir="rtl" lang="ar">تفريغ الحقول</span></button>
+                </div>
+                <p class="form-message" data-message="projects" role="alert"></p>
+              </form>
+              <div class="list" data-list="projects"></div>
+            </section>
+
+            <section class="panel" data-panel="articles" data-role-required="editor" hidden>
+              <h2>Manage Articles<span class="translation" dir="rtl" lang="ar">إدارة المقالات</span></h2>
+              <form class="stack" data-form="articles" novalidate>
+                <input type="hidden" name="id">
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Title</span>
+                      <span class="translation" dir="rtl" lang="ar">العنوان</span>
+                    </span>
+                    <input type="text" name="title" required>
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Slug</span>
+                      <span class="translation" dir="rtl" lang="ar">المعرّف</span>
+                    </span>
+                    <input type="text" name="slug" required placeholder="article-slug">
+                  </label>
+                </div>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Summary</span>
+                    <span class="translation" dir="rtl" lang="ar">الملخص</span>
+                  </span>
+                  <textarea name="summary" rows="3"></textarea>
+                </label>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Content</span>
+                    <small>HTML or Markdown</small>
+                    <span class="translation" dir="rtl" lang="ar">المحتوى</span>
+                    <small class="translation" dir="rtl" lang="ar">HTML أو Markdown</small>
+                  </span>
+                  <textarea name="content" rows="6"></textarea>
+                </label>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Detail URL</span>
+                      <small>Leave empty to use default template</small>
+                      <span class="translation" dir="rtl" lang="ar">رابط التفاصيل</span>
+                      <small class="translation" dir="rtl" lang="ar">اتركه فارغاً لاستخدام القالب الافتراضي</small>
+                    </span>
+                    <input type="url" name="detailUrl" placeholder="/Articles/article.html">
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Cover Image</span>
+                      <span class="translation" dir="rtl" lang="ar">صورة الغلاف</span>
+                    </span>
+                    <div class="file-input" data-upload-field data-upload-folder="article-covers">
+                      <input type="url" name="coverImage" placeholder="/media/articles/article-cover.jpg">
+                      <div class="file-actions">
+                        <input type="file" accept="image/*" data-file-control hidden>
+                        <button type="button" class="secondary" data-action="select-file">Upload Image<span class="translation" dir="rtl" lang="ar">رفع صورة</span></button>
+                        <button type="button" class="ghost" data-action="clear-file">Clear<span class="translation" dir="rtl" lang="ar">مسح</span></button>
+                      </div>
+                    </div>
+                  </label>
+                </div>
+                <div class="form-divider" role="presentation"></div>
+                <h3 class="form-subheading">Media Attachments<span class="translation" dir="rtl" lang="ar">الوسائط المرفقة</span></h3>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Featured Video URL</span>
+                      <small>Optional embed link (YouTube, Vimeo, etc.)</small>
+                      <span class="translation" dir="rtl" lang="ar">رابط الفيديو المميز</span>
+                      <small class="translation" dir="rtl" lang="ar">اختياري (يمكن استخدام روابط YouTube أو Vimeo)</small>
+                    </span>
+                    <input type="url" name="videoUrl" placeholder="https://youtu.be/xyz">
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Gallery Image URLs</span>
+                      <small>Add one URL per line</small>
+                      <span class="translation" dir="rtl" lang="ar">روابط صور المعرض</span>
+                      <small class="translation" dir="rtl" lang="ar">أضف كل رابط في سطر منفصل</small>
+                    </span>
+                    <textarea name="galleryImages" rows="4" placeholder="/media/uploads/general/article-image.jpg&#10;https://example.com/another.jpg"></textarea>
+                  </label>
+                </div>
+                <div class="file-input media-upload" data-upload-field data-upload-folder="article-gallery" data-upload-success="تم رفع الصورة وإضافتها إلى المعرض." data-upload-append-target="[name='galleryImages']">
+                  <input type="url" name="__articleGalleryUpload" data-upload-input placeholder="آخر رابط صورة مرفوعة" readonly>
+                  <div class="file-actions">
+                    <input type="file" accept="image/*" data-file-control hidden>
+                    <button type="button" class="secondary" data-action="select-file">Upload Image<span class="translation" dir="rtl" lang="ar">رفع صورة</span></button>
+                    <button type="button" class="ghost" data-action="clear-file">Clear<span class="translation" dir="rtl" lang="ar">مسح</span></button>
+                  </div>
+                </div>
+                <p class="media-upload-note">Uploaded images are added to the gallery list automatically.<span class="translation" dir="rtl" lang="ar">يتم إضافة الصور التي يتم رفعها تلقائياً إلى قائمة المعرض.</span></p>
+                <label class="checkbox">
+                  <input type="checkbox" name="isPublished">
+                  <span>
+                    <span class="label-main">Publish this article</span>
+                    <span class="translation" dir="rtl" lang="ar">نشر هذه المقالة</span>
+                  </span>
+                </label>
+                <div class="actions">
+                  <button type="submit" class="primary">Save<span class="translation" dir="rtl" lang="ar">حفظ</span></button>
+                  <button type="button" class="ghost" data-action="reset">Clear<span class="translation" dir="rtl" lang="ar">تفريغ الحقول</span></button>
+                </div>
+                <p class="form-message" data-message="articles" role="alert"></p>
+              </form>
+              <div class="list" data-list="articles"></div>
+            </section>
+
+            <section class="panel" data-panel="settings" data-role-required="super-admin" hidden>
+              <h2>Site Controls<span class="translation" dir="rtl" lang="ar">لوحة تحكم الموقع</span></h2>
+              <p class="subtitle">Adjust the homepage branding and public contact details.<span class="translation" dir="rtl" lang="ar">قم بتعديل هوية الصفحة الرئيسية وبيانات التواصل العامة.</span></p>
+              <form class="stack" data-form="settings" novalidate>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Homepage Title</span>
+                    <small>Displayed as the main headline</small>
+                    <span class="translation" dir="rtl" lang="ar">عنوان الصفحة الرئيسية</span>
+                    <small class="translation" dir="rtl" lang="ar">يظهر كعنوان رئيسي في الواجهة</small>
+                  </span>
+                  <input type="text" name="homeHeroTitle" placeholder="CYBER X">
+                </label>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Arabic Tagline</span>
+                      <small>Shown under the title (Arabic)</small>
+                      <span class="translation" dir="rtl" lang="ar">سطر تعريفي (بالعربية)</span>
+                      <small class="translation" dir="rtl" lang="ar">يظهر أسفل العنوان</small>
+                    </span>
+                    <input type="text" name="homeHeroLineAr" placeholder="الصوت الذي يُرَى">
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">English Tagline</span>
+                      <small>Shown under the title (English)</small>
+                      <span class="translation" dir="rtl" lang="ar">سطر تعريفي (بالإنجليزية)</span>
+                      <small class="translation" dir="rtl" lang="ar">يظهر أسفل العنوان</small>
+                    </span>
+                    <input type="text" name="homeHeroLineEn" placeholder="A sound unveiled to the eyes">
+                  </label>
+                </div>
+                <div class="field">
+                  <span>
+                    <span class="label-main">Homepage Hero Image</span>
+                    <small>Displayed behind the hero content</small>
+                    <span class="translation" dir="rtl" lang="ar">صورة الواجهة الرئيسية</span>
+                    <small class="translation" dir="rtl" lang="ar">تظهر خلف محتوى الواجهة</small>
+                  </span>
+                  <div class="file-input" data-upload-field data-upload-folder="hero-images" data-upload-success="تم رفع صورة الواجهة.">
+                    <input type="url" name="homeHeroImage" placeholder="/media/uploads/general/hero.jpg">
+                    <div class="file-actions">
+                      <input type="file" accept="image/*" data-file-control hidden>
+                      <button type="button" class="secondary" data-action="select-file">Upload Image<span class="translation" dir="rtl" lang="ar">رفع صورة</span></button>
+                      <button type="button" class="ghost" data-action="clear-file">Clear<span class="translation" dir="rtl" lang="ar">مسح</span></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Public Email</span>
+                      <small>Shown in the contact section</small>
+                      <span class="translation" dir="rtl" lang="ar">البريد الإلكتروني العام</span>
+                      <small class="translation" dir="rtl" lang="ar">يظهر في قسم التواصل</small>
+                    </span>
+                    <input type="email" name="contactEmail" placeholder="cyberx.un@gmail.com">
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">GitHub Link</span>
+                      <small>Used for the GitHub button</small>
+                      <span class="translation" dir="rtl" lang="ar">رابط GitHub</span>
+                      <small class="translation" dir="rtl" lang="ar">يُستخدم لزر GitHub</small>
+                    </span>
+                    <input type="url" name="contactGithub" placeholder="https://github.com/CyberX-sec">
+                  </label>
+                </div>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Telegram Link</span>
+                    <small>Used for the Telegram button</small>
+                    <span class="translation" dir="rtl" lang="ar">رابط Telegram</span>
+                    <small class="translation" dir="rtl" lang="ar">يُستخدم لزر Telegram</small>
+                  </span>
+                  <input type="url" name="contactTelegram" placeholder="https://t.me/NTU_CyberX">
+                </label>
+                <div class="form-divider" role="presentation"></div>
+                <h3 class="form-subheading">About Section<span class="translation" dir="rtl" lang="ar">قسم من نحن</span></h3>
+                <label class="field">
+                  <span>
+                    <span class="label-main">About Heading</span>
+                    <span class="translation" dir="rtl" lang="ar">عنوان قسم من نحن</span>
+                  </span>
+                  <input type="text" name="homeAboutHeading" placeholder="من نحن">
+                </label>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">About Text (Arabic)</span>
+                      <span class="translation" dir="rtl" lang="ar">النص (بالعربية)</span>
+                    </span>
+                    <textarea name="homeAboutTextAr" rows="3" placeholder="سبعة من طلاب هندسة تقنيات الأمن السيبراني / الجامعة التقنية الشمالية"></textarea>
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">About Text (English)</span>
+                      <span class="translation" dir="rtl" lang="ar">النص (بالإنجليزية)</span>
+                    </span>
+                    <textarea name="homeAboutTextEn" rows="3" placeholder="Seven students of Cybersecurity Engineering / Northern Technical University"></textarea>
+                  </label>
+                </div>
+                <div class="form-divider" role="presentation"></div>
+                <h3 class="form-subheading">Our Vision<span class="translation" dir="rtl" lang="ar">رؤيتنا</span></h3>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Vision Heading</span>
+                    <span class="translation" dir="rtl" lang="ar">عنوان قسم الرؤية</span>
+                  </span>
+                  <input type="text" name="homeVisionHeading" placeholder="رؤيتنا">
+                </label>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Vision Text (Arabic)</span>
+                      <span class="translation" dir="rtl" lang="ar">نص الرؤية بالعربية</span>
+                    </span>
+                    <textarea name="homeVisionTextAr" rows="3" placeholder="أن نكون قوة معرفية"></textarea>
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Vision Text (English)</span>
+                      <span class="translation" dir="rtl" lang="ar">نص الرؤية بالإنجليزية</span>
+                    </span>
+                    <textarea name="homeVisionTextEn" rows="3" placeholder="To be a force of knowledge"></textarea>
+                  </label>
+                </div>
+                <div class="form-divider" role="presentation"></div>
+                <h3 class="form-subheading">Homepage Sections<span class="translation" dir="rtl" lang="ar">أقسام الصفحة الرئيسية</span></h3>
+                <p class="meta">رتب الأقسام وحرر العناوين وروابط «عرض الكل». سيتم تطبيق التغييرات بعد حفظ الإعدادات.<span class="translation" dir="rtl" lang="ar">غيّر ترتيب الأقسام ونصوصها، ثم احفظ ليتم تحديث الموقع العام.</span></p>
+                <div class="home-section-card">
+                  <div class="home-section-card__header">
+                    <h4>الترتيب الحالي</h4>
+                    <button type="button" class="ghost" data-action="home-order-reset">إعادة الترتيب الافتراضي</button>
+                  </div>
+                  <ol class="home-section-list" data-home-order-list>
+                    <li class="home-section-placeholder">جاري تحميل ترتيب الأقسام…</li>
+                  </ol>
+                </div>
+                <div class="home-section-copy">
+                  <section class="home-section-group" data-home-section="projects">
+                    <h4>Projects Section<span class="translation" dir="rtl" lang="ar">قسم المشاريع</span></h4>
+                    <div class="grid">
+                      <label class="field">
+                        <span>
+                          <span class="label-main">Section Title</span>
+                          <span class="translation" dir="rtl" lang="ar">عنوان القسم</span>
+                        </span>
+                        <input type="text" name="projectsSectionTitle" placeholder="مشاريع فريق Cyber X">
+                      </label>
+                      <label class="field">
+                        <span>
+                          <span class="label-main">View All Title</span>
+                          <span class="translation" dir="rtl" lang="ar">عنوان بطاقة عرض الكل</span>
+                        </span>
+                        <input type="text" name="projectsSectionViewAllTitle" placeholder="استكشف المشاريع">
+                      </label>
+                    </div>
+                    <div class="grid">
+                      <label class="field">
+                        <span>
+                          <span class="label-main">View All Button</span>
+                          <span class="translation" dir="rtl" lang="ar">زر عرض الكل</span>
+                        </span>
+                        <input type="text" name="projectsSectionViewAllCta" placeholder="عرض جميع المشاريع">
+                      </label>
+                      <label class="field">
+                        <span>
+                          <span class="label-main">View All Link</span>
+                          <span class="translation" dir="rtl" lang="ar">رابط عرض الكل</span>
+                        </span>
+                        <input type="url" name="projectsSectionViewAllLink" placeholder="/Projects/Main.html">
+                      </label>
+                    </div>
+                  </section>
+                  <section class="home-section-group" data-home-section="lectures">
+                    <h4>Lectures Section<span class="translation" dir="rtl" lang="ar">قسم المحاضرات</span></h4>
+                    <div class="grid">
+                      <label class="field">
+                        <span>
+                          <span class="label-main">Section Title</span>
+                          <span class="translation" dir="rtl" lang="ar">عنوان القسم</span>
+                        </span>
+                        <input type="text" name="lecturesSectionTitle" placeholder="محاضرات مختارة">
+                      </label>
+                      <label class="field">
+                        <span>
+                          <span class="label-main">View All Title</span>
+                          <span class="translation" dir="rtl" lang="ar">عنوان بطاقة عرض الكل</span>
+                        </span>
+                        <input type="text" name="lecturesSectionViewAllTitle" placeholder="كل المحاضرات">
+                      </label>
+                    </div>
+                    <div class="grid">
+                      <label class="field">
+                        <span>
+                          <span class="label-main">View All Button</span>
+                          <span class="translation" dir="rtl" lang="ar">زر عرض الكل</span>
+                        </span>
+                        <input type="text" name="lecturesSectionViewAllCta" placeholder="عرض المحاضرات">
+                      </label>
+                      <label class="field">
+                        <span>
+                          <span class="label-main">View All Link</span>
+                          <span class="translation" dir="rtl" lang="ar">رابط عرض الكل</span>
+                        </span>
+                        <input type="url" name="lecturesSectionViewAllLink" placeholder="/Lectures/Main-Lectures.html">
+                      </label>
+                    </div>
+                  </section>
+                  <section class="home-section-group" data-home-section="articles">
+                    <h4>Articles Section<span class="translation" dir="rtl" lang="ar">قسم المقالات</span></h4>
+                    <div class="grid">
+                      <label class="field">
+                        <span>
+                          <span class="label-main">Section Title</span>
+                          <span class="translation" dir="rtl" lang="ar">عنوان القسم</span>
+                        </span>
+                        <input type="text" name="articlesSectionTitle" placeholder="أحدث المقالات">
+                      </label>
+                      <label class="field">
+                        <span>
+                          <span class="label-main">View All Title</span>
+                          <span class="translation" dir="rtl" lang="ar">عنوان بطاقة عرض الكل</span>
+                        </span>
+                        <input type="text" name="articlesSectionViewAllTitle" placeholder="قراءة المزيد">
+                      </label>
+                    </div>
+                    <div class="grid">
+                      <label class="field">
+                        <span>
+                          <span class="label-main">View All Button</span>
+                          <span class="translation" dir="rtl" lang="ar">زر عرض الكل</span>
+                        </span>
+                        <input type="text" name="articlesSectionViewAllCta" placeholder="عرض المقالات">
+                      </label>
+                      <label class="field">
+                        <span>
+                          <span class="label-main">View All Link</span>
+                          <span class="translation" dir="rtl" lang="ar">رابط عرض الكل</span>
+                        </span>
+                        <input type="url" name="articlesSectionViewAllLink" placeholder="/Articles/Main-Articles.html">
+                      </label>
+                    </div>
+                  </section>
+                </div>
+                <div class="actions">
+                  <button type="submit" class="primary">Save Controls<span class="translation" dir="rtl" lang="ar">حفظ التعديلات</span></button>
+                  <button type="button" class="ghost" data-action="reset">Reset<span class="translation" dir="rtl" lang="ar">إعادة التعيين</span></button>
+                </div>
+                <p class="form-message" data-message="settings" role="alert"></p>
+              </form>
+              <template id="home-section-item-template">
+                <li class="home-section-item" data-section-key>
+                  <div class="home-section-label" data-section-label></div>
+                  <div class="home-section-actions">
+                    <button type="button" class="ghost" data-action="home-section-top" title="أعلى القائمة">أعلى</button>
+                    <button type="button" class="ghost" data-action="home-section-up" title="تحريك للأعلى">فوق</button>
+                    <button type="button" class="ghost" data-action="home-section-down" title="تحريك للأسفل">تحت</button>
+                  </div>
+                </li>
+              </template>
+            </section>
+
+            <section class="panel" data-panel="activity" data-role-required="admin" hidden>
+              <h2>Activity Log<span class="translation" dir="rtl" lang="ar">سجل النشاط</span></h2>
+              <p class="subtitle">Review every action taken by admins across the dashboard. Visible to admins and the super admin.<span class="translation" dir="rtl" lang="ar">استعرض جميع الإجراءات التي قام بها المشرفون داخل لوحة التحكم. هذا السجل مرئي للمشرفين والمشرف الأعلى.</span></p>
+              <div class="actions">
+                <button type="button" class="secondary" data-action="refresh-activity">Refresh Log<span class="translation" dir="rtl" lang="ar">تحديث السجل</span></button>
+              </div>
+              <div class="activity-log" data-list="activity"></div>
+            </section>
+
+            <section class="panel" data-panel="lectures" data-role-required="admin" hidden>
+              <h2>Manage Lectures<span class="translation" dir="rtl" lang="ar">إدارة المحاضرات</span></h2>
+              <form class="stack" data-form="lectures" novalidate>
+                <input type="hidden" name="id">
+                <label class="field">
+                  <span>
+                    <span class="label-main">Title</span>
+                    <span class="translation" dir="rtl" lang="ar">العنوان</span>
+                  </span>
+                  <input type="text" name="title" required>
+                </label>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Description</span>
+                    <span class="translation" dir="rtl" lang="ar">الوصف</span>
+                  </span>
+                  <textarea name="description" rows="4"></textarea>
+                </label>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Cover Image</span>
+                    <span class="translation" dir="rtl" lang="ar">صورة الغلاف</span>
+                  </span>
+                  <div class="file-input" data-upload-field data-upload-folder="lecture-covers">
+                    <input type="url" name="coverImage" placeholder="/media/lectures/cover.jpg">
+                    <div class="file-actions">
+                      <input type="file" accept="image/*" data-file-control hidden>
+                      <button type="button" class="secondary" data-action="select-file">Upload Image<span class="translation" dir="rtl" lang="ar">رفع صورة</span></button>
+                      <button type="button" class="ghost" data-action="clear-file">Clear<span class="translation" dir="rtl" lang="ar">مسح</span></button>
+                    </div>
+                  </div>
+                </label>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Channel</span>
+                      <span class="translation" dir="rtl" lang="ar">القناة</span>
+                    </span>
+                    <select name="channelId" required>
+                      <option value="">— Select channel —</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Order</span>
+                      <small>Optional</small>
+                      <span class="translation" dir="rtl" lang="ar">الترتيب</span>
+                      <small class="translation" dir="rtl" lang="ar">اختياري</small>
+                    </span>
+                    <input type="number" name="position" min="1" placeholder="1">
+                  </label>
+                </div>
+                <div class="grid">
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Video URL</span>
+                      <span class="translation" dir="rtl" lang="ar">رابط الفيديو</span>
+                    </span>
+                    <input type="url" name="videoUrl" placeholder="https://youtu.be/...">
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Resource URL</span>
+                      <span class="translation" dir="rtl" lang="ar">رابط الموارد</span>
+                    </span>
+                    <input type="url" name="resourceUrl" placeholder="https://example.com/notes.pdf">
+                  </label>
+                </div>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Category</span>
+                    <span class="translation" dir="rtl" lang="ar">التصنيف</span>
+                  </span>
+                  <input type="text" name="category" placeholder="Curriculum / General">
+                </label>
+                <label class="checkbox">
+                  <input type="checkbox" name="isPublished">
+                  <span>
+                    <span class="label-main">Publish this lecture</span>
+                    <span class="translation" dir="rtl" lang="ar">نشر هذه المحاضرة</span>
+                  </span>
+                </label>
+                <div class="actions">
+                  <button type="submit" class="primary">Save<span class="translation" dir="rtl" lang="ar">حفظ</span></button>
+                  <button type="button" class="ghost" data-action="reset">Clear<span class="translation" dir="rtl" lang="ar">تفريغ الحقول</span></button>
+                </div>
+                <p class="form-message" data-message="lectures" role="alert"></p>
+              </form>
+              <div class="list" data-list="lectures"></div>
+            </section>
+
+            <section class="panel" data-panel="team" data-role-required="super-admin" hidden>
+              <h2>Team Management<span class="translation" dir="rtl" lang="ar">إدارة الفريق</span></h2>
+              <p class="subtitle">Edit member profiles and control how they appear on the homepage.<span class="translation" dir="rtl" lang="ar">قم بتعديل ملفات الأعضاء وتحكم في ترتيب ظهورهم على الصفحة الرئيسية.</span></p>
+              <div class="team-management">
+                <div class="team-editor">
+                  <h3>Member Editor<span class="translation" dir="rtl" lang="ar">محرر الأعضاء</span></h3>
+                  <form class="stack" data-form="team-profile" novalidate>
+                    <input type="hidden" name="id">
+                    <label class="field">
+                      <span>
+                        <span class="label-main">Select Member</span>
+                        <small>Choose a profile to update</small>
+                        <span class="translation" dir="rtl" lang="ar">اختر العضو</span>
+                        <small class="translation" dir="rtl" lang="ar">اختر ملفاً لتعديله</small>
+                      </span>
+                      <select name="memberId" data-team-member-select required>
+                        <option value="">— اختر عضو الفريق —</option>
+                      </select>
+                    </label>
+                    <label class="field">
+                      <span>
+                        <span class="label-main">Display Name</span>
+                        <span class="translation" dir="rtl" lang="ar">الاسم المعروض</span>
+                      </span>
+                      <input type="text" name="displayName" required>
+                    </label>
+                    <div class="grid">
+                      <label class="field">
+                        <span>
+                          <span class="label-main">Profile Slug</span>
+                          <small>Used in the public URL</small>
+                          <span class="translation" dir="rtl" lang="ar">معرّف الملف</span>
+                          <small class="translation" dir="rtl" lang="ar">يستخدم في رابط الملف العام</small>
+                        </span>
+                        <input type="text" name="profileSlug" placeholder="member-slug">
+                      </label>
+                      <label class="field">
+                        <span>
+                          <span class="label-main">Headline</span>
+                          <small>Short role or focus</small>
+                          <span class="translation" dir="rtl" lang="ar">اللقب المهني</span>
+                          <small class="translation" dir="rtl" lang="ar">وصف قصير</small>
+                        </span>
+                        <input type="text" name="profileHeadline" placeholder="Security Researcher">
+                      </label>
+                    </div>
+                    <div class="grid">
+                      <label class="field">
+                        <span>
+                          <span class="label-main">Avatar URL</span>
+                          <span class="translation" dir="rtl" lang="ar">رابط الصورة الشخصية</span>
+                        </span>
+                        <div class="file-input" data-upload-field data-upload-folder="avatars" data-upload-success="تم تحديث الصورة الشخصية.">
+                          <input type="url" name="avatarUrl" placeholder="/Team-images/avatar.png">
+                          <div class="file-actions">
+                            <input type="file" accept="image/*" data-file-control hidden>
+                            <button type="button" class="secondary" data-action="select-file">Upload Image<span class="translation" dir="rtl" lang="ar">رفع صورة</span></button>
+                            <button type="button" class="ghost" data-action="clear-file">Clear<span class="translation" dir="rtl" lang="ar">مسح</span></button>
+                          </div>
+                        </div>
+                      </label>
+                      <label class="field">
+                        <span>
+                          <span class="label-main">Hero Image</span>
+                          <span class="translation" dir="rtl" lang="ar">صورة الغلاف</span>
+                        </span>
+                        <div class="file-input" data-upload-field data-upload-folder="profile-hero" data-upload-success="تم تحديث صورة الغلاف.">
+                          <input type="url" name="profileHeroImage" placeholder="/media/uploads/general/profile-hero.jpg">
+                          <div class="file-actions">
+                            <input type="file" accept="image/*" data-file-control hidden>
+                            <button type="button" class="secondary" data-action="select-file">Upload Image<span class="translation" dir="rtl" lang="ar">رفع صورة</span></button>
+                            <button type="button" class="ghost" data-action="clear-file">Clear<span class="translation" dir="rtl" lang="ar">مسح</span></button>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                    <label class="field">
+                      <span>
+                        <span class="label-main">Biography</span>
+                        <span class="translation" dir="rtl" lang="ar">نبذة تعريفية</span>
+                      </span>
+                      <textarea name="bio" rows="3" placeholder="Short bio shown on the card."></textarea>
+                    </label>
+                    <div class="grid">
+                      <label class="field">
+                        <span>
+                          <span class="label-main">Badges</span>
+                          <small>One badge per line</small>
+                          <span class="translation" dir="rtl" lang="ar">الشارات</span>
+                          <small class="translation" dir="rtl" lang="ar">اكتب كل شارة في سطر</small>
+                        </span>
+                        <textarea name="badges" rows="3"></textarea>
+                      </label>
+                      <label class="field">
+                        <span>
+                          <span class="label-main">Certificates / Achievements</span>
+                          <small>Format: Title | URL</small>
+                          <span class="translation" dir="rtl" lang="ar">الشهادات / الإنجازات</span>
+                          <small class="translation" dir="rtl" lang="ar">الصيغة: الاسم | الرابط</small>
+                        </span>
+                        <textarea name="certificates" rows="3"></textarea>
+                      </label>
+                    </div>
+                    <label class="field">
+                      <span>
+                        <span class="label-main">Contact Links</span>
+                        <small>Format: Label | URL per line</small>
+                        <span class="translation" dir="rtl" lang="ar">روابط التواصل</span>
+                        <small class="translation" dir="rtl" lang="ar">الصيغة: الاسم | الرابط في كل سطر</small>
+                      </span>
+                      <textarea name="profileContactLinks" rows="3"></textarea>
+                    </label>
+                    <label class="field">
+                      <span>
+                        <span class="label-main">Manual Position (optional)</span>
+                        <small>Force a numeric placement; leave empty to follow the list order.</small>
+                        <span class="translation" dir="rtl" lang="ar">الموضع اليدوي (اختياري)</span>
+                        <small class="translation" dir="rtl" lang="ar">اتركه فارغاً لاستخدام الترتيب العام.</small>
+                      </span>
+                      <input type="number" name="profilePosition" min="0" step="1" placeholder="مثال: 1">
+                    </label>
+                    <label class="checkbox">
+                      <input type="checkbox" name="profileVisible">
+                      <span>
+                        <span class="label-main">Display on public team page</span>
+                        <span class="translation" dir="rtl" lang="ar">إظهار في صفحة الفريق العامة</span>
+                      </span>
+                    </label>
+                    <div class="actions">
+                      <button type="submit" class="primary">Save Member<span class="translation" dir="rtl" lang="ar">حفظ العضو</span></button>
+                      <button type="button" class="ghost" data-action="reset">Reset<span class="translation" dir="rtl" lang="ar">إعادة التعيين</span></button>
+                    </div>
+                    <p class="form-message" data-message="team-profile" role="alert"></p>
+                  </form>
+                </div>
+                <div class="team-order" data-team-panel>
+                  <h3>Homepage Order<span class="translation" dir="rtl" lang="ar">ترتيب الصفحة الرئيسية</span></h3>
+                  <template id="team-order-item-template">
+                    <li class="team-order-item" data-team-id>
+                      <div class="team-order-item-meta">
+                        <div class="team-order-avatar">
+                          <img src="" alt="" data-team-avatar>
+                        </div>
+                        <div class="team-order-text">
+                          <span class="team-order-name" data-team-name></span>
+                          <span class="team-order-headline" data-team-headline></span>
+                          <span class="team-order-slug" data-team-slug></span>
+                        </div>
+                        <span class="tag team-order-visibility" data-team-visible></span>
+                      </div>
+                      <div class="team-order-actions">
+                        <button type="button" class="ghost" data-action="team-top">أعلى القائمة</button>
+                        <button type="button" class="ghost" data-action="team-up">تحريك للأعلى</button>
+                        <button type="button" class="ghost" data-action="team-down">تحريك للأسفل</button>
+                      </div>
+                      <div class="team-order-manage">
+                        <button type="button" class="secondary" data-action="team-edit">تعديل</button>
+                        <button type="button" class="ghost" data-action="team-delete">حذف</button>
+                      </div>
+                    </li>
+                  </template>
+
+                  <ol class="team-order-list" data-team-list>
+                    <li class="team-order-placeholder">جاري تحميل أعضاء الفريق…</li>
+                  </ol>
+
+                  <div class="team-order-controls">
+                    <button type="button" class="primary" data-action="team-save" disabled>حفظ الترتيب</button>
+                    <button type="button" class="ghost" data-action="team-refresh">إعادة التعيين</button>
+                  </div>
+                  <p class="form-message" data-message="team" role="alert"></p>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel" data-panel="users" data-role-required="super-admin" hidden>
+              <h2>Manage Users<span class="translation" dir="rtl" lang="ar">إدارة المستخدمين</span></h2>
+              <p class="subtitle">Add new administrators or adjust permissions. This page is visible to super admins only.<span class="translation" dir="rtl" lang="ar">أضف مشرفين جدداً أو عدل الصلاحيات. هذه الصفحة مرئية للمشرف الأعلى فقط.</span></p>
+              <form class="stack" data-form="users" novalidate>
+                <input type="hidden" name="id">
+                <label class="field">
+                  <span>
+                    <span class="label-main">Email</span>
+                    <span class="translation" dir="rtl" lang="ar">البريد الإلكتروني</span>
+                  </span>
+                  <input type="email" name="email" required placeholder="user@example.com">
+                </label>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Display Name</span>
+                    <span class="translation" dir="rtl" lang="ar">الاسم المعروض</span>
+                  </span>
+                  <input type="text" name="displayName" required placeholder="User Name">
+                </label>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Password</span>
+                    <small>Leave blank to keep unchanged</small>
+                    <span class="translation" dir="rtl" lang="ar">كلمة المرور</span>
+                    <small class="translation" dir="rtl" lang="ar">اتركها فارغة في حال عدم التغيير</small>
+                  </span>
+                  <input type="password" name="password" autocomplete="new-password" placeholder="••••••">
+                </label>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Role</span>
+                    <span class="translation" dir="rtl" lang="ar">الصلاحيات</span>
+                  </span>
+                  <select name="role">
+                    <option value="admin">Admin</option>
+                    <option value="editor">Editor</option>
+                    <option value="super-admin">Super Admin</option>
+                  </select>
+                </label>
+                <div class="actions">
+                  <button type="submit" class="primary">Save<span class="translation" dir="rtl" lang="ar">حفظ</span></button>
+                  <button type="button" class="ghost" data-action="reset">Clear<span class="translation" dir="rtl" lang="ar">تفريغ الحقول</span></button>
+                </div>
+                <p class="form-message" data-message="users" role="alert"></p>
+              </form>
+              <div class="list" data-list="users"></div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

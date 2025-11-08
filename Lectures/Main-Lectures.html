@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="../Lectures-Templates/Lectures-Main.css" />
   <link href="https://fonts.googleapis.com/css2?family=Almarai&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet" />
+  <script src="../Templates/api-client.js" defer></script>
+  <script src="../Templates/site-branding.js" defer></script>
+  <script src="../Templates/lectures-page.js" defer></script>
 </head>
 <body>
 
@@ -35,6 +38,7 @@
           <li><a href="#lectures">الدروس</a></li>
           <li><a href="#blog">المقالات</a></li>
           <li><a href="#team">الفريق</a></li> -->
+          <li><a href="../Services/Main-Services.html">الخدمات</a></li>
           <li><a href="#contact">تواصل معنا</a></li>
         </ul>
       </div>
@@ -51,52 +55,23 @@
 
 <section id="Projects" class="section">
     <div class="container">
-      <!-- <h2 lang="en" > titles </h2> -->
-      <section id="projects" class="section">
-        <div class="container">
-            <div class="projects">
-
-                <div class="article-card">
-                    <img src="../Lectures-images/OS.JPG" >
-                    <h3>  مادة نظم التشغيل </h3>
-                    <p>  شرح : عبدالله ياسر </p>
-                    <a href="Abdallah-Channel.html" target="_blank" class="read-more-btn">اقرأ المزيد</a>
-                </div>
-
-                <div class="article-card">
-                    <img src="../Lectures-images/Network.jpg" >
-                    <h3>  مادة شبكات الحاسوب </h3>
-                    <p>  شرح : ايهاب ثائر </p>
-                    <a href="Ehab-Channel.html" target="_blank" class="read-more-btn">اقرأ المزيد</a>
-                </div>
-
-                <!-- <div class="article-card">
-                    <img src="../Lectures-images/python.JPEG" >
-                    <h3>  مادة لغة بايثون </h3>
-                    <p>  شرح : وليد محمد  </p>
-                    <a href="Waleed-Channel.html" target="_blank" class="read-more-btn">اقرأ المزيد</a>
-                </div> -->
-
-                <!-- <div class="article-card">
-                    <img src="../Lectures-images/SQL.JPEG" >
-                    <h3> مادة انظمة قواعد البيانات </h3>
-                    <p>  شرح : عثمان محمد   </p>
-                    <a href="Othman-Channel.html" target="_blank" class="read-more-btn">اقرأ المزيد</a>
-                </div> -->
-
-            </div>
+      <div class="channels" id="channels-container">
+        <div class="channel-card" data-placeholder>
+          <h3>جاري تحميل القنوات…</h3>
+          <p>سيتم عرض القنوات والمحاضرات بمجرد استرجاع البيانات من الخادم.</p>
         </div>
-      </section>
+      </div>
+      <p id="lectures-error" class="lectures-error" hidden></p>
     </div>
   </section>
 
   <section id="contact" class="section">
     <div class="container">
       <h2>تواصل معنا</h2>
-      <p lang="en" >E-mail: cyberx.un@gmail.com</p>
+      <p lang="en" data-contact-email data-label="E-mail: " data-default-text="E-mail: cyberx.un@gmail.com">E-mail: cyberx.un@gmail.com</p>
       <!-- <p lang="en" >GitHub: github.com/CyberX-sec</p> -->
-      <a href="https://github.com/CyberX-sec" target="_blank" class="telegram-btn" lang="en" >Github</a>
-      <a href="https://t.me/NTU_CyberX" target="_blank" class="telegram-btn" lang="en" >Telegram</a>
+      <a href="https://github.com/CyberX-sec" target="_blank" rel="noopener noreferrer" class="telegram-btn" lang="en" data-contact-github data-default-text="Github" data-default-href="https://github.com/CyberX-sec">Github</a>
+      <a href="https://t.me/NTU_CyberX" target="_blank" rel="noopener noreferrer" class="telegram-btn" lang="en" data-contact-telegram data-default-text="Telegram" data-default-href="https://t.me/NTU_CyberX">Telegram</a>
       <!-- <a href="" target="_blank" class="telegram-btn" lang="en">instagram</a> -->
     </div>
   </section>

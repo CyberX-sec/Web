@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyber X Team Member</title>
+  <link rel="stylesheet" href="../Templates/detail.css" />
+  <link rel="stylesheet" href="../Templates/profile-detail.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Almarai&display=swap" rel="stylesheet" />
+  <script src="../Templates/api-client.js" defer></script>
+  <script src="../Templates/profile-detail.js" defer></script>
+</head>
+<body data-profile-page>
+  <div id="loader">
+    <div id="loader-text">1%</div>
+  </div>
+
+  <div id="page-content" class="detail-app" style="display: none;">
+    <div class="bg"></div>
+
+    <header class="detail-header">
+      <div class="detail-brand">
+      </div>
+      <nav class="detail-nav" data-profile-nav></nav>
+    </header>
+
+    <main class="detail-main">
+      <section class="hero profile-hero">
+        <div class="hero-inner">
+          <span class="hero-kicker">
+            <span data-profile-role>CYBER X MEMBER</span>
+            <span class="translation" dir="rtl" lang="ar" data-profile-role-translation>عضو في فريق Cyber X</span>
+          </span>
+          <h2 data-profile-name>Loading…</h2>
+          <p class="hero-subtitle" data-profile-headline hidden></p>
+        </div>
+      </section>
+
+      <section class="detail-section profile-section">
+        <article class="profile-card">
+          <div class="profile-avatar-wrapper">
+            <img src="" alt="" data-profile-avatar>
+          </div>
+          <div class="profile-meta">
+            <h3 data-profile-display>Cyber X Member</h3>
+            <p class="profile-bio" data-profile-bio></p>
+            <div class="profile-tags" data-profile-badges></div>
+            <div class="profile-tags secondary" data-profile-certificates></div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="detail-footer">
+      <p>
+        All rights reserved — Cyber X
+        <span class="translation" dir="rtl" lang="ar">كافة الحقوق محفوظة — Cyber X</span>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>

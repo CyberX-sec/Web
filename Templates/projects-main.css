@@ -113,6 +113,16 @@ header {
   color: #c9c9c9;
 }
 
+.article-card img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 12px;
+  margin: 0 0 1rem;
+  display: block;
+  background: rgba(255, 255, 255, 0.06);
+}
+
 .article-card .read-more-btn {
   display: inline-block;
   background-color: #333;
