@@ -16,6 +16,7 @@ const createUsersTable = `
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     display_name TEXT NOT NULL,
+    display_name_ar TEXT,
     role TEXT NOT NULL DEFAULT 'admin',
     avatar_url TEXT,
     bio TEXT,
@@ -63,6 +64,17 @@ const createProjectsTable = `
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),
     author_id INTEGER,
     FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE SET NULL
+  )
+`;
+
+const createProjectCollaboratorsTable = `
+  CREATE TABLE IF NOT EXISTS project_collaborators (
+    project_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    sort_order INTEGER,
+    PRIMARY KEY (project_id, user_id),
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
   )
 `;
 
@@ -139,9 +151,18 @@ async function ensureSiteSetting(key, value) {
 }
 
 async function ensureDefaultAdmin({ email, password, displayName }) {
-  const existingUser = await get('SELECT id, role FROM users WHERE email = ?', [email]);
+  const existingUser = await get(
+    'SELECT id, role, display_name, display_name_ar FROM users WHERE email = ?',
+    [email]
+  );
 
   if (existingUser) {
+    if (!existingUser.display_name_ar && existingUser.display_name) {
+      await run(
+        'UPDATE users SET display_name_ar = ?, updated_at = datetime("now") WHERE id = ?',
+        [existingUser.display_name, existingUser.id]
+      );
+    }
     if (existingUser.role !== 'super-admin') {
       await run('UPDATE users SET role = ?, updated_at = datetime("now") WHERE id = ?', [
         'super-admin',
@@ -154,40 +175,24 @@ async function ensureDefaultAdmin({ email, password, displayName }) {
 
   const passwordHash = await bcrypt.hash(password, 12);
   const result = await run(
-    `INSERT INTO users (email, password_hash, display_name, role) VALUES (?, ?, ?, 'super-admin')`,
-    [email, passwordHash, displayName]
+    `INSERT INTO users (email, password_hash, display_name, display_name_ar, role)
+     VALUES (?, ?, ?, ?, 'super-admin')`,
+    [email, passwordHash, displayName, displayName]
   );
   console.log(`Default admin user created for ${email}. Please change the password after first login.`);
   return result.lastID;
 }
 
-async function ensureChannel({
-  slug,
-  name,
-  ownerEmail,
-  heroTitle,
-  heroSubtitle,
-  description,
-  coverImage,
-}) {
-  const existingChannel = await get('SELECT id FROM channels WHERE slug = ?', [slug]);
-  if (existingChannel) {
-    return;
-  }
-
-  let ownerId = null;
-  if (ownerEmail) {
-    const owner = await get('SELECT id FROM users WHERE email = ?', [ownerEmail]);
-    if (owner) {
-      ownerId = owner.id;
+async function removeLegacyChannels() {
+  const legacySlugs = ['abdallah-channel', 'ehab-channel'];
+  for (const slug of legacySlugs) {
+    const existingChannel = await get('SELECT id FROM channels WHERE slug = ?', [slug]);
+    if (!existingChannel) {
+      continue;
     }
+    await run('DELETE FROM channels WHERE id = ?', [existingChannel.id]);
+    console.log(`Removed legacy channel seed: ${slug}`);
   }
-
-  await run(
-    `INSERT INTO channels (name, slug, description, hero_title, hero_subtitle, cover_image, owner_id, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
-    [name, slug, description || null, heroTitle || null, heroSubtitle || null, coverImage || null, ownerId]
-  );
 }
 
 async function initializeDatabase(config) {
@@ -195,6 +200,7 @@ async function initializeDatabase(config) {
   await run(createUsersTable);
   await run(createArticlesTable);
   await run(createProjectsTable);
+  await run(createProjectCollaboratorsTable);
   await run(createChannelsTable);
   await run(createLecturesTable);
   await run(createSiteSettingsTable);
@@ -204,6 +210,7 @@ async function initializeDatabase(config) {
   await ensureColumn('users', 'bio', 'ALTER TABLE users ADD COLUMN bio TEXT');
   await ensureColumn('users', 'badges', 'ALTER TABLE users ADD COLUMN badges TEXT');
   await ensureColumn('users', 'certificates', 'ALTER TABLE users ADD COLUMN certificates TEXT');
+  await ensureColumn('users', 'display_name_ar', 'ALTER TABLE users ADD COLUMN display_name_ar TEXT');
   await ensureColumn('users', 'profile_slug', 'ALTER TABLE users ADD COLUMN profile_slug TEXT');
   await ensureColumn('users', 'profile_headline', 'ALTER TABLE users ADD COLUMN profile_headline TEXT');
   await ensureColumn(
@@ -240,27 +247,9 @@ async function initializeDatabase(config) {
   });
 
   try {
-    await ensureChannel({
-      slug: 'abdallah-channel',
-      name: 'قناة عبدالله',
-      ownerEmail: adminEmail,
-      heroTitle: 'أنظمة التشغيل',
-      heroSubtitle: 'بواسطة عبدالله ياسر',
-      description: 'قناة محاضرات أنظمة التشغيل الخاصة بفريق Cyber X.',
-      coverImage: null,
-    });
-
-    await ensureChannel({
-      slug: 'ehab-channel',
-      name: 'قناة إيهاب',
-      ownerEmail: adminEmail,
-      heroTitle: 'شبكات الحاسوب',
-      heroSubtitle: 'بواسطة إيهاب ثائر',
-      description: 'قناة محاضرات شبكات الحاسوب ضمن Cyber X.',
-      coverImage: null,
-    });
+    await removeLegacyChannels();
   } catch (error) {
-    console.warn('Failed to ensure default channels', error);
+    console.warn('Failed to remove legacy channels', error);
   }
 
   try {

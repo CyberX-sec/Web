@@ -106,6 +106,10 @@
     return fetchJson(`/admin/activity${buildQuery(params)}`);
   }
 
+  async function fetchUserOptions() {
+    return fetchJson('/admin/user-options');
+  }
+
   async function fetchAdminChannels() {
     return fetchJson('/admin/channels');
   }
@@ -326,6 +330,7 @@
     fetchSiteSettings,
     fetchAdminSiteSettings,
     fetchActivityLog,
+  fetchUserOptions,
     fetchAdminChannels,
     createChannel,
     updateChannel,

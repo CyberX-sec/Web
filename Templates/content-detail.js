@@ -11,6 +11,10 @@
     kicker: '[data-detail-kicker]',
     meta: '[data-detail-meta]',
     body: '[data-detail-body]',
+    video: '[data-detail-video]',
+    gallery: '[data-detail-gallery]',
+    collaborators: '[data-detail-collaborators]',
+    collaboratorsList: '[data-detail-collaborators-list]',
     error: '#detail-error',
     loader: '#loader',
     loaderText: '#loader-text',
@@ -99,6 +103,216 @@
       metaNode.appendChild(wrapper);
     });
   };
+
+  const containsHtml = (value) => /<[a-z][\s\S]*>/i.test(String(value || ''));
+
+  function resolveAssetUrl(url) {
+    if (!url) {
+      return '';
+    }
+    const trimmed = String(url).trim();
+    if (!trimmed) {
+      return '';
+    }
+    if (/^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(trimmed) || trimmed.startsWith('mailto:') || trimmed.startsWith('tel:')) {
+      return trimmed;
+    }
+    if (trimmed.startsWith('/')) {
+      return trimmed;
+    }
+    if (trimmed.startsWith('../')) {
+      return trimmed;
+    }
+    return `../${trimmed.replace(/^\.+\//, '')}`;
+  }
+
+  function extractYouTubeId(url) {
+    if (!url) {
+      return null;
+    }
+    const patterns = [
+      /youtu\.be\/([^?&]+)/i,
+      /youtube\.com\/watch\?v=([^?&]+)/i,
+      /youtube\.com\/embed\/([^?&]+)/i,
+      /youtube\.com\/shorts\/([^?&]+)/i,
+    ];
+    for (let index = 0; index < patterns.length; index += 1) {
+      const match = url.match(patterns[index]);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+    return null;
+  }
+
+  function createVideoEmbed(url) {
+    if (!url) {
+      return null;
+    }
+
+    const trimmed = String(url).trim();
+    if (!trimmed) {
+      return null;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'video-frame';
+
+    const youTubeId = extractYouTubeId(trimmed);
+    if (youTubeId) {
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${youTubeId}`;
+      iframe.title = 'YouTube video player';
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute(
+        'allow',
+        'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+      );
+      iframe.allowFullscreen = true;
+      iframe.loading = 'lazy';
+      wrapper.appendChild(iframe);
+      return wrapper;
+    }
+
+    if (/\.(mp4|webm|ogg)(?:\?.*)?$/i.test(trimmed)) {
+      const video = document.createElement('video');
+      video.controls = true;
+      video.src = resolveAssetUrl(trimmed);
+      video.preload = 'metadata';
+      wrapper.appendChild(video);
+      return wrapper;
+    }
+
+    const iframe = document.createElement('iframe');
+  iframe.src = resolveAssetUrl(trimmed);
+    iframe.title = 'Embedded media player';
+    iframe.setAttribute('frameborder', '0');
+    iframe.loading = 'lazy';
+    iframe.allowFullscreen = true;
+    wrapper.appendChild(iframe);
+    return wrapper;
+  }
+
+  function renderVideo(videoUrl) {
+    const container = document.querySelector(selectors.video);
+    if (!container) {
+      return;
+    }
+    container.innerHTML = '';
+    if (!videoUrl) {
+      container.hidden = true;
+      return;
+    }
+    const embed = createVideoEmbed(videoUrl);
+    if (!embed) {
+      container.hidden = true;
+      return;
+    }
+    container.appendChild(embed);
+    container.hidden = false;
+  }
+
+  function renderGallery(images) {
+    const container = document.querySelector(selectors.gallery);
+    if (!container) {
+      return;
+    }
+    container.innerHTML = '';
+    if (!Array.isArray(images) || !images.length) {
+      container.hidden = true;
+      return;
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'detail-gallery-grid';
+
+    images.forEach((entry, index) => {
+      const figure = document.createElement('figure');
+      figure.className = 'detail-gallery-item';
+      const img = document.createElement('img');
+      img.src = resolveAssetUrl(entry);
+      img.loading = 'lazy';
+      img.alt = `Gallery item ${index + 1}`;
+      figure.appendChild(img);
+      grid.appendChild(figure);
+    });
+
+    container.appendChild(grid);
+    container.hidden = false;
+  }
+
+  function renderCollaborators(collaborators, type) {
+    const section = document.querySelector(selectors.collaborators);
+    const list = document.querySelector(selectors.collaboratorsList);
+    if (!section || !list) {
+      return;
+    }
+
+    list.innerHTML = '';
+    if (!Array.isArray(collaborators) || !collaborators.length) {
+      section.hidden = true;
+      return;
+    }
+
+    const heading = section.querySelector('[data-collaborators-heading]');
+    const headingTranslation = section.querySelector('[data-collaborators-heading-translation]');
+    if (heading) {
+      heading.textContent = type === 'article' ? 'Article Contributors' : 'Project Collaborators';
+    }
+    if (headingTranslation) {
+      headingTranslation.textContent = type === 'article' ? 'المساهمون في المقال' : 'شركاء المشروع';
+    }
+
+    list.setAttribute('dir', 'auto');
+
+    collaborators.forEach((collaborator) => {
+      if (!collaborator) {
+        return;
+      }
+      const item = document.createElement('li');
+      item.className = 'collaborator-chip';
+      item.dir = 'auto';
+      const label = collaborator.displayName || collaborator.email || `#${collaborator.id}`;
+
+      if (collaborator.profileSlug) {
+        const link = document.createElement('a');
+        link.href = `../Team/profile.html?slug=${encodeURIComponent(collaborator.profileSlug)}`;
+        link.textContent = label;
+        link.rel = 'noopener noreferrer';
+        item.appendChild(link);
+      } else {
+        item.textContent = label;
+      }
+
+      list.appendChild(item);
+    });
+
+    section.hidden = false;
+  }
+
+  function applyAutoDirection(container) {
+    if (!container) {
+      return;
+    }
+    container.querySelectorAll('p, li, blockquote, h2, h3, h4, figcaption').forEach((element) => {
+      if (!element.hasAttribute('dir')) {
+        element.setAttribute('dir', 'auto');
+      }
+    });
+  }
+
+  function detectDominantDirection(...parts) {
+    const combined = parts
+      .filter(Boolean)
+      .map((value) => String(value))
+      .join(' ');
+    const arabicMatches = combined.match(/[\u0600-\u06FF]/g) || [];
+    const latinMatches = combined.match(/[A-Za-z]/g) || [];
+    if (!arabicMatches.length && !latinMatches.length) {
+      return null;
+    }
+    return arabicMatches.length >= latinMatches.length ? 'rtl' : 'ltr';
+  }
 
   function toCssUrl(url) {
     if (!url) {
@@ -220,11 +434,17 @@
 
     if (titleNode) {
       titleNode.textContent = item.title || '—';
+      titleNode.dir = 'auto';
     }
 
     if (subtitleNode) {
       if (item.summary) {
-        subtitleNode.textContent = item.summary;
+        if (containsHtml(item.summary)) {
+          subtitleNode.innerHTML = item.summary;
+        } else {
+          subtitleNode.textContent = item.summary;
+        }
+        subtitleNode.dir = 'auto';
         subtitleNode.hidden = false;
       } else {
         subtitleNode.hidden = true;
@@ -259,12 +479,16 @@
         bodyNode.innerHTML = '<p>No detailed content yet.<span class="translation" dir="rtl" lang="ar">لم يتم إضافة محتوى تفصيلي بعد.</span></p>';
       }
 
-      if (item.direction === 'rtl') {
-        document.body.dataset.direction = 'rtl';
-      } else {
-        document.body.dataset.direction = 'ltr';
-      }
+      bodyNode.setAttribute('dir', 'auto');
+      applyAutoDirection(bodyNode);
+
+      const detectedDirection = detectDominantDirection(item.title, item.summary, bodyNode.textContent);
+      document.body.dataset.direction = detectedDirection || 'ltr';
     }
+
+    renderVideo(item.videoUrl);
+    renderGallery(item.galleryImages);
+    renderCollaborators(item.collaborators, type);
 
     setHeroBackground(heroNode, item.coverImage);
 

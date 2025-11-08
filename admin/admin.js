@@ -238,7 +238,9 @@
       card.className = 'list-item';
 
       const heading = document.createElement('h3');
-      heading.textContent = user.displayName || user.email || '—';
+      const nameEn = user.displayName || user.email || '—';
+      const nameAr = user.displayNameAr || null;
+      setBilingualText(heading, nameEn, nameAr);
       card.appendChild(heading);
 
       if (user.email) {
@@ -331,10 +333,12 @@
     }
 
     const actor = (entry.details && entry.details.actor) || {};
-    const name = entry.userDisplayName || actor.displayName || '';
+    const nameEn = entry.userDisplayName || actor.displayName || '';
+    const nameAr = entry.userDisplayNameAr || actor.displayNameAr || '';
     const email = entry.userEmail || actor.email || '';
     const roleKey = entry.userRole || actor.role || '';
     const roleLabel = ROLE_LABELS[roleKey] || roleKey;
+    const name = formatBilingualLabel(nameEn, nameAr);
 
     const segments = [];
     if (name) {
@@ -347,10 +351,6 @@
 
     if (roleLabel) {
       segments.push(`(${roleLabel})`);
-    }
-
-    if (!segments.length && entry.userId) {
-      return `#${entry.userId}`;
     }
 
     if (!segments.length) {
@@ -427,6 +427,47 @@
       return value.map((item) => String(item).trim()).filter(Boolean).join('\n');
     }
     return parseTextareaList(value).join('\n');
+  }
+
+  function populateCollaboratorSelect(selectedIds = []) {
+    if (!refs.projectCollaborators) {
+      return;
+    }
+
+    const select = refs.projectCollaborators;
+    const selectedSet = new Set((selectedIds || []).map((value) => String(value)));
+    const options = Array.isArray(state.userOptions) ? state.userOptions : [];
+
+    select.innerHTML = '';
+
+    const currentUserId = state.user && state.user.id ? String(state.user.id) : null;
+
+    options.forEach((entry) => {
+      const entryId = String(entry.id);
+      if (entryId === currentUserId) {
+        return;
+      }
+      const option = document.createElement('option');
+      option.value = entryId;
+      if (entry.displayName && entry.email && entry.displayName !== entry.email) {
+        option.textContent = `${entry.displayName} (${entry.email})`;
+      } else {
+        option.textContent = entry.displayName || entry.email || `User #${entryId}`;
+      }
+      option.selected = selectedSet.has(entryId);
+      select.appendChild(option);
+    });
+
+    if (!select.options.length) {
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.disabled = true;
+      placeholder.textContent = 'لا توجد حسابات إضافية متاحة.';
+      select.appendChild(placeholder);
+      select.disabled = true;
+    } else {
+      select.disabled = false;
+    }
   }
 
   function renderActivityLog(items) {
@@ -704,6 +745,46 @@
     articles: { en: 'Articles', ar: 'المقالات' },
   };
 
+  function formatBilingualLabel(english, arabic) {
+    const primary = english || arabic || '';
+    if (!primary) {
+      return '';
+    }
+    if (arabic && arabic !== english && english) {
+      return `${english} | ${arabic}`;
+    }
+    return primary;
+  }
+
+  function setBilingualText(element, english, arabic) {
+    if (!element) {
+      return;
+    }
+    element.innerHTML = '';
+
+    const primary = english || arabic;
+    if (primary) {
+      element.appendChild(document.createTextNode(primary));
+    }
+
+    const needsTranslation = arabic && arabic !== english;
+    if (needsTranslation) {
+      const translation = document.createElement('span');
+      translation.className = 'translation';
+      translation.dir = 'rtl';
+      translation.lang = 'ar';
+      translation.textContent = arabic;
+      if (element.childNodes.length) {
+        element.appendChild(document.createTextNode(' '));
+      }
+      element.appendChild(translation);
+    }
+
+    if (!primary && !needsTranslation) {
+      element.textContent = '';
+    }
+  }
+
   const state = {
     user: null,
     data: {
@@ -716,6 +797,7 @@
       activity: [],
       team: [],
     },
+    userOptions: [],
     profile: null,
     activePanel: 'overview',
     teamDirty: false,
@@ -780,6 +862,11 @@
     const template = refs.teamTemplate;
 
     collection.forEach((member, index) => {
+      const nameEn = member.displayName || member.email || '';
+      const nameAr = member.displayNameAr || '';
+      const combinedLabel = formatBilingualLabel(nameEn, nameAr);
+      const numberedLabel = `${index + 1}. ${combinedLabel || nameEn || 'عضو في الفريق'}`;
+
       if (template && template.content) {
         const fragment = template.content.cloneNode(true);
         const itemElement = fragment.querySelector('.team-order-item');
@@ -792,7 +879,7 @@
         const avatar = fragment.querySelector('[data-team-avatar]');
         if (avatar) {
           avatar.src = member.avatarUrl || DEFAULT_AVATAR;
-          avatar.alt = member.displayName || member.email || `#${member.id}`;
+          avatar.alt = combinedLabel || nameEn || `#${member.id}`;
           avatar.addEventListener(
             'error',
             () => {
@@ -802,9 +889,9 @@
           );
         }
 
-        const name = fragment.querySelector('[data-team-name]');
-        if (name) {
-          name.textContent = `${index + 1}. ${member.displayName || member.email || 'عضو في الفريق'}`;
+        const nameNode = fragment.querySelector('[data-team-name]');
+        if (nameNode) {
+          nameNode.textContent = numberedLabel;
         }
 
         const headline = fragment.querySelector('[data-team-headline]');
@@ -860,7 +947,7 @@
         const fallback = document.createElement('li');
         fallback.className = 'team-order-item';
         fallback.dataset.teamId = member.id;
-        fallback.textContent = `${index + 1}. ${member.displayName || member.email || 'عضو في الفريق'}`;
+        fallback.textContent = numberedLabel;
         list.appendChild(fallback);
       }
     });
@@ -923,7 +1010,8 @@
     members.forEach((member) => {
       const option = document.createElement('option');
       option.value = member.id;
-      option.textContent = member.displayName || member.email || `#${member.id}`;
+      const label = formatBilingualLabel(member.displayName || member.email || '', member.displayNameAr || '');
+      option.textContent = label || member.displayName || member.email || `#${member.id}`;
       select.appendChild(option);
     });
 
@@ -1370,6 +1458,9 @@
       activity: document.querySelector('[data-list="activity"]'),
     };
 
+    refs.projectCollaborators = document.querySelector('[data-project-collaborators]');
+    refs.projectCollaboratorsHint = document.querySelector('[data-project-collaborators-hint]');
+
   refs.homeOrderTemplate = document.getElementById('home-section-item-template');
   refs.homeOrderList = document.querySelector('[data-home-order-list]');
   refs.homeOrderResetButton = document.querySelector('[data-action="home-order-reset"]');
@@ -1746,6 +1837,7 @@
     state.user = null;
     state.profile = null;
     state.activePanel = 'overview';
+    state.userOptions = [];
     state.data = {
       projects: [],
       articles: [],
@@ -1801,6 +1893,7 @@
 
     populateChannelSelect();
     populateOwnerSelect();
+    populateCollaboratorSelect();
     updateOverviewHints();
   }
 
@@ -1911,6 +2004,7 @@
     }
 
     await Promise.all(tasks);
+    await loadUserOptions();
     populateChannelSelect();
     populateOwnerSelect();
     refreshPanel();
@@ -1962,6 +2056,23 @@
     } catch (error) {
       console.error('Failed to load site settings', error);
     }
+  }
+
+  async function loadUserOptions() {
+    if (!isAdmin()) {
+      state.userOptions = [];
+      return;
+    }
+
+    try {
+      const options = await CyberXApi.fetchUserOptions();
+      state.userOptions = Array.isArray(options) ? options : [];
+    } catch (error) {
+      console.error('Failed to load user options', error);
+      state.userOptions = [];
+    }
+
+    populateCollaboratorSelect();
   }
 
   async function loadProfile() {
@@ -2036,7 +2147,8 @@
     state.data.users.forEach((user) => {
       const option = document.createElement('option');
       option.value = user.id;
-      option.textContent = user.displayName || user.email;
+      const label = formatBilingualLabel(user.displayName || user.email || '', user.displayNameAr || '');
+      option.textContent = label || user.email || `User #${user.id}`;
       select.appendChild(option);
     });
 
@@ -2246,6 +2358,80 @@
       .replace(/^-|-$/g, '');
   }
 
+  const HTML_TAG_REGEX = /<[^>]+>/i;
+
+  function hasHtmlTags(value) {
+    if (!value) {
+      return false;
+    }
+    return HTML_TAG_REGEX.test(String(value));
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function transformRichTextInput(rawValue) {
+    const value = rawValue == null ? '' : String(rawValue);
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return '';
+    }
+    if (hasHtmlTags(trimmed)) {
+      return trimmed;
+    }
+
+    const paragraphs = trimmed
+      .split(/\r?\n{2,}/)
+      .map((block) => block.split(/\r?\n/).map((line) => escapeHtml(line)).join('<br>'))
+      .map((block) => (block ? `<p dir="auto">${block}</p>` : ''))
+      .filter(Boolean);
+
+    if (!paragraphs.length) {
+      return `<p dir="auto">${escapeHtml(trimmed)}</p>`;
+    }
+
+    return paragraphs.join('');
+  }
+
+  function normalizeSummaryInput(rawValue) {
+    const value = rawValue == null ? '' : String(rawValue);
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return '';
+    }
+    if (hasHtmlTags(trimmed)) {
+      return trimmed;
+    }
+    return escapeHtml(trimmed).replace(/\r?\n/g, '<br>');
+  }
+
+  function ensureAbsoluteDetailUrl(resource, linkValue) {
+    const link = String(linkValue || '').trim();
+    if (!link) {
+      return '';
+    }
+
+    if (/^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(link) || link.startsWith('mailto:') || link.startsWith('tel:')) {
+      return link;
+    }
+
+    if (link.startsWith('/')) {
+      return link;
+    }
+
+    const cleaned = link
+      .replace(/^(?:\.\.\/)+/, '')
+      .replace(/^(?:\.\/)+/, '');
+
+    return `/${cleaned.replace(/^\/+/, '')}`;
+  }
+
   function resetForm(resource) {
     const form = refs.forms[resource];
     if (!form) {
@@ -2268,6 +2454,11 @@
       if (form.elements.ownerId) {
         form.elements.ownerId.value = '';
       }
+    } else if (resource === 'projects' && refs.projectCollaborators) {
+      Array.from(refs.projectCollaborators.options || []).forEach((option) => {
+        option.selected = false;
+      });
+      populateCollaboratorSelect();
     } else if (resource === 'settings') {
       renderSettingsForm();
     } else if (resource === 'teamProfile') {
@@ -2308,6 +2499,14 @@
       }
       if (form.elements['__articleGalleryUpload']) {
         form.elements['__articleGalleryUpload'].value = '';
+      }
+      if (resource === 'projects' && refs.projectCollaborators) {
+        const selectedIds = Array.isArray(item.collaboratorIds)
+          ? item.collaboratorIds.map((entry) => String(entry))
+          : Array.isArray(item.collaborators)
+            ? item.collaborators.map((entry) => String(entry.id))
+            : [];
+        populateCollaboratorSelect(selectedIds);
       }
     } else if (resource === 'lectures') {
       populateChannelSelect();
@@ -2448,8 +2647,8 @@
         const payload = {
           title: clean(formData.get('title')),
           slug: clean(formData.get('slug')),
-          summary: formData.get('summary') || '',
-          content: formData.get('content') || '',
+          summary: (formData.get('summary') || '').trim(),
+          content: transformRichTextInput(formData.get('content') || ''),
           detailUrl: clean(formData.get('detailUrl')),
           coverImage: clean(formData.get('coverImage')),
           isPublished: Boolean(form.elements.isPublished && form.elements.isPublished.checked),
@@ -2464,16 +2663,21 @@
           payload.galleryImages = parseTextareaList(galleryValue);
         }
 
+        if (resource === 'projects' && refs.projectCollaborators) {
+          const collaboratorIds = formData.getAll('collaboratorIds') || [];
+          payload.collaboratorIds = collaboratorIds.map((entry) => String(entry).trim()).filter(Boolean);
+        }
+
         if (!payload.title || !payload.slug) {
           setMessage(message, 'الرجاء تعبئة العنوان والمعرّف.');
           return;
         }
 
-        if (!payload.detailUrl && payload.slug) {
-          payload.detailUrl = resource === 'projects'
-            ? `Projects/detail.html?slug=${encodeURIComponent(payload.slug)}`
-            : `Articles/detail.html?slug=${encodeURIComponent(payload.slug)}`;
-        }
+        const defaultDetailUrl = resource === 'projects'
+          ? `/Projects/detail.html?slug=${encodeURIComponent(payload.slug)}`
+          : `/Articles/detail.html?slug=${encodeURIComponent(payload.slug)}`;
+
+        payload.detailUrl = ensureAbsoluteDetailUrl(resource, payload.detailUrl || defaultDetailUrl);
 
         if (resource === 'projects') {
           if (id) {
@@ -2794,6 +2998,23 @@
         metaRow.appendChild(galleryTag);
       }
 
+      if (item.authorName) {
+        const authorTag = document.createElement('span');
+        authorTag.className = 'tag';
+        authorTag.textContent = `بواسطة: ${item.authorName}`;
+        metaRow.appendChild(authorTag);
+      }
+
+      if (resource === 'projects' && Array.isArray(item.collaborators) && item.collaborators.length) {
+        const collabTag = document.createElement('span');
+        collabTag.className = 'tag';
+        const names = item.collaborators.map((entry) => entry.displayName || entry.email || `#${entry.id}`);
+        const preview = names.slice(0, 2).join(', ');
+        const remaining = names.length - 2;
+        collabTag.textContent = remaining > 0 ? `شركاء: ${preview} +${remaining}` : `شركاء: ${preview}`;
+        metaRow.appendChild(collabTag);
+      }
+
       if (item.publishedAt) {
         const publishedTag = document.createElement('span');
         publishedTag.className = 'tag';
@@ -2811,6 +3032,9 @@
       editButton.className = 'secondary';
       editButton.textContent = 'تعديل';
       editButton.addEventListener('click', () => {
+        if (editButton.disabled) {
+          return;
+        }
         fillForm(resource, item);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
@@ -2820,7 +3044,20 @@
       deleteButton.type = 'button';
       deleteButton.className = 'ghost';
       deleteButton.textContent = 'حذف';
+      const currentUserId = state.user && state.user.id ? String(state.user.id) : null;
+      const authorId = item.authorId != null ? String(item.authorId) : null;
+      const ownsItem = !authorId || (currentUserId && authorId === currentUserId);
+      const canModify = isSuperAdmin() || ownsItem;
+      if (!canModify) {
+        editButton.disabled = true;
+        editButton.title = 'يمكن لصاحب المحتوى أو المشرف الأعلى فقط تعديل هذا العنصر.';
+        deleteButton.disabled = true;
+        deleteButton.title = 'يمكن لصاحب المحتوى أو المشرف الأعلى فقط حذف هذا العنصر.';
+      }
       deleteButton.addEventListener('click', async () => {
+        if (deleteButton.disabled) {
+          return;
+        }
         const confirmed = window.confirm('هل أنت متأكد من حذف هذا العنصر؟');
         if (!confirmed) {
           return;
@@ -2846,4 +3083,5 @@
       list.appendChild(card);
     });
   }
+
 })();

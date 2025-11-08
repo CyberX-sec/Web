@@ -68,6 +68,206 @@ const serializeListField = (value) => {
   return JSON.stringify(filtered);
 };
 
+const normalizeIdArray = (value) => {
+  if (value === undefined || value === null) {
+    return [];
+  }
+
+  let list = value;
+
+  if (typeof list === 'string') {
+    const trimmed = list.trim();
+    if (!trimmed) {
+      return [];
+    }
+    if (trimmed.startsWith('[')) {
+      try {
+        list = JSON.parse(trimmed);
+      } catch (error) {
+        list = trimmed.split(',');
+      }
+    } else if (trimmed.includes(',')) {
+      list = trimmed.split(',');
+    } else {
+      list = [trimmed];
+    }
+  }
+
+  if (!Array.isArray(list)) {
+    list = [list];
+  }
+
+  const unique = new Set();
+  list.forEach((entry) => {
+    const numeric = Number(String(entry).trim());
+    if (Number.isInteger(numeric) && numeric > 0) {
+      unique.add(numeric);
+    }
+  });
+
+  return Array.from(unique);
+};
+
+const sanitizeCollaboratorIds = (value, authorId) => {
+  const ids = normalizeIdArray(value);
+  const author = Number(authorId);
+  return ids.filter((id) => Number.isInteger(id) && id > 0 && id !== author);
+};
+
+async function filterExistingUserIds(ids) {
+  if (!Array.isArray(ids) || !ids.length) {
+    return [];
+  }
+
+  const placeholders = ids.map(() => '?').join(',');
+  const rows = await all(`SELECT id FROM users WHERE id IN (${placeholders})`, ids);
+  const existing = new Set(rows.map((row) => Number(row.id)));
+  return ids.filter((id) => existing.has(id));
+}
+
+async function replaceProjectCollaborators(projectId, collaboratorIds) {
+  const filtered = await filterExistingUserIds(collaboratorIds);
+  await run('DELETE FROM project_collaborators WHERE project_id = ?', [projectId]);
+
+  if (!filtered.length) {
+    return [];
+  }
+
+  for (let index = 0; index < filtered.length; index += 1) {
+    const collaboratorId = filtered[index];
+    await run(
+      `INSERT INTO project_collaborators (project_id, user_id, sort_order)
+       VALUES (?, ?, ?)` ,
+      [projectId, collaboratorId, index]
+    );
+  }
+
+  return filtered;
+}
+
+async function fetchProjectCollaborators(projectId) {
+  return all(
+    `SELECT users.id,
+            users.display_name AS display_name,
+            users.display_name_ar AS display_name_ar,
+            users.email,
+            users.role,
+            users.profile_slug,
+            COALESCE(pc.sort_order, 999) AS sort_order
+       FROM project_collaborators AS pc
+       JOIN users ON users.id = pc.user_id
+      WHERE pc.project_id = ?
+      ORDER BY sort_order, users.display_name COLLATE NOCASE`,
+    [projectId]
+  );
+}
+
+const mapCollaboratorRow = (row) => ({
+  id: Number(row.id),
+  displayName: row.display_name || row.email || `User #${row.id}`,
+  displayNameAr: row.display_name_ar || null,
+  email: row.email || null,
+  role: row.role || null,
+  profileSlug: row.profile_slug || null,
+});
+
+const sanitizeProjectRow = (row, collaborators = []) => {
+  if (!row) {
+    return null;
+  }
+
+  return {
+    id: row.id,
+    title: row.title,
+    summary: row.summary || '',
+    content: row.content || '',
+    slug: row.slug,
+    coverImage: row.cover_image || '',
+    detailUrl: row.detail_url || '',
+    videoUrl: row.video_url || '',
+    galleryImages: parseListField(row.gallery_images),
+    isPublished: Number(row.is_published) === 1,
+    publishedAt: row.published_at,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    authorId: row.author_id,
+    authorName: row.author_name || null,
+    authorNameAr: row.author_name_ar || null,
+    collaborators: collaborators.map(mapCollaboratorRow),
+    collaboratorIds: collaborators.map((entry) => Number(entry.id)),
+  };
+};
+
+const sanitizeArticleRow = (row) => {
+  if (!row) {
+    return null;
+  }
+
+  return {
+    id: row.id,
+    title: row.title,
+    summary: row.summary || '',
+    content: row.content || '',
+    slug: row.slug,
+    coverImage: row.cover_image || '',
+    detailUrl: row.detail_url || '',
+    videoUrl: row.video_url || '',
+    galleryImages: parseListField(row.gallery_images),
+    isPublished: Number(row.is_published) === 1,
+    publishedAt: row.published_at,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    authorId: row.author_id,
+    authorName: row.author_name || null,
+    authorNameAr: row.author_name_ar || null,
+  };
+};
+
+async function loadProjectWithCollaborators(projectId) {
+  const project = await get(
+    `SELECT projects.*, users.display_name AS author_name, users.display_name_ar AS author_name_ar
+       FROM projects
+       LEFT JOIN users ON users.id = projects.author_id
+      WHERE projects.id = ?`,
+    [projectId]
+  );
+
+  if (!project) {
+    return null;
+  }
+
+  const collaboratorRows = await fetchProjectCollaborators(projectId);
+  return sanitizeProjectRow(project, collaboratorRows);
+}
+
+async function loadArticleWithAuthor(articleId) {
+  const article = await get(
+    `SELECT articles.*, users.display_name AS author_name, users.display_name_ar AS author_name_ar
+       FROM articles
+       LEFT JOIN users ON users.id = articles.author_id
+      WHERE articles.id = ?`,
+    [articleId]
+  );
+
+  return sanitizeArticleRow(article);
+}
+
+const canModifyContent = (existing, user) => {
+  if (isSuperAdminUser(user)) {
+    return true;
+  }
+
+  if (!existing) {
+    return false;
+  }
+
+  if (!existing.author_id) {
+    return true;
+  }
+
+  return Number(existing.author_id) === Number(user.id);
+};
+
 const normalizeSlug = (value) => {
   if (!value) {
     return '';
@@ -85,6 +285,7 @@ const sanitizeUser = (row) => ({
   id: row.id,
   email: row.email,
   displayName: row.display_name,
+  displayNameAr: row.display_name_ar || null,
   role: row.role,
   avatarUrl: row.avatar_url,
   bio: row.bio,
@@ -104,6 +305,7 @@ const sanitizeProfile = (row) => ({
   id: row.id,
   email: row.email,
   displayName: row.display_name,
+  displayNameAr: row.display_name_ar || null,
   role: row.role,
   avatarUrl: row.avatar_url,
   bio: row.bio || '',
@@ -156,6 +358,7 @@ const sanitizeLectureAdmin = (row) => ({
 const sanitizeTeamMemberAdmin = (row) => ({
   id: row.id,
   displayName: row.display_name,
+  displayNameAr: row.display_name_ar || null,
   email: row.email,
   avatarUrl: row.avatar_url || '',
   profileSlug: row.profile_slug || null,
@@ -186,6 +389,7 @@ const sanitizeActivityLog = (row) => {
     details,
     createdAt: row.created_at,
     userDisplayName: row.user_display_name || (actor && actor.displayName) || null,
+    userDisplayNameAr: row.user_display_name_ar || (actor && actor.displayNameAr) || null,
     userEmail: row.user_email || (actor && actor.email) || null,
     userRole: row.user_role || (actor && actor.role ? actor.role : null),
   };
@@ -294,6 +498,7 @@ async function recordActivity(user, action, resource, resourceId, details = {}) 
       id: user.id,
       role: user.role,
       displayName: user.displayName || user.email || `User #${user.id}`,
+      displayNameAr: user.displayNameAr || null,
       email: user.email || null,
     };
   }
@@ -564,7 +769,7 @@ router.get('/activity', ensureAuthenticated, requireRole('admin', 'super-admin')
 
   try {
     const rows = await all(
-      `SELECT logs.*, users.display_name AS user_display_name, users.email AS user_email, users.role AS user_role
+  `SELECT logs.*, users.display_name AS user_display_name, users.display_name_ar AS user_display_name_ar, users.email AS user_email, users.role AS user_role
          FROM activity_logs AS logs
          LEFT JOIN users ON users.id = logs.user_id
         ORDER BY logs.created_at DESC
@@ -608,6 +813,7 @@ router.post('/auth/login', async (req, res) => {
       id: profile.id,
       email: profile.email,
       displayName: profile.displayName,
+      displayNameAr: profile.displayNameAr,
       role: profile.role,
       avatarUrl: profile.avatarUrl,
       bio: profile.bio,
@@ -652,6 +858,7 @@ router.get('/auth/me', ensureAuthenticated, async (req, res) => {
       id: profile.id,
       email: profile.email,
       displayName: profile.displayName,
+      displayNameAr: profile.displayNameAr,
       role: profile.role,
       avatarUrl: profile.avatarUrl,
       bio: profile.bio,
@@ -688,6 +895,7 @@ router.get('/profile/me', ensureAuthenticated, async (req, res) => {
 router.put('/profile/me', ensureAuthenticated, async (req, res) => {
   const {
     displayName,
+    displayNameAr,
     avatarUrl,
     bio,
     badges,
@@ -711,7 +919,14 @@ router.put('/profile/me', ensureAuthenticated, async (req, res) => {
       return;
     }
 
-    const nextDisplayName = displayName !== undefined ? displayName : current.display_name;
+    const nextDisplayName = displayName !== undefined ? String(displayName).trim() : current.display_name;
+    const displayNameArProvided = Object.prototype.hasOwnProperty.call(req.body, 'displayNameAr');
+    let nextDisplayNameAr = displayNameArProvided
+      ? String(displayNameAr || '').trim()
+      : current.display_name_ar;
+    if (displayNameArProvided && !nextDisplayNameAr) {
+      nextDisplayNameAr = null;
+    }
     const nextAvatar = avatarUrl !== undefined ? avatarUrl : current.avatar_url;
     const nextBio = bio !== undefined ? bio : current.bio;
     const nextBadges = badges !== undefined ? serializeListField(badges) : current.badges;
@@ -746,6 +961,7 @@ router.put('/profile/me', ensureAuthenticated, async (req, res) => {
     await run(
       `UPDATE users
           SET display_name = ?,
+              display_name_ar = ?,
               avatar_url = ?,
               bio = ?,
               badges = ?,
@@ -758,7 +974,8 @@ router.put('/profile/me', ensureAuthenticated, async (req, res) => {
               updated_at = datetime('now')
         WHERE id = ?`,
       [
-        nextDisplayName,
+  nextDisplayName,
+  nextDisplayNameAr,
         nextAvatar,
         nextBio,
         nextBadges,
@@ -778,6 +995,7 @@ router.put('/profile/me', ensureAuthenticated, async (req, res) => {
       id: profile.id,
       email: profile.email,
       displayName: profile.displayName,
+      displayNameAr: profile.displayNameAr,
       role: profile.role,
       avatarUrl: profile.avatarUrl,
       bio: profile.bio,
@@ -800,7 +1018,7 @@ router.put('/profile/me', ensureAuthenticated, async (req, res) => {
 router.get('/users', ensureAuthenticated, requireRole('super-admin'), async (req, res) => {
   try {
     const rows = await all(
-      'SELECT id, email, display_name, role, created_at, updated_at FROM users ORDER BY created_at ASC'
+  'SELECT id, email, display_name, display_name_ar, role, created_at, updated_at FROM users ORDER BY created_at ASC'
     );
     res.json(rows.map(sanitizeUser));
   } catch (error) {
@@ -809,8 +1027,37 @@ router.get('/users', ensureAuthenticated, requireRole('super-admin'), async (req
   }
 });
 
+router.get(
+  '/user-options',
+  ensureAuthenticated,
+  requireRole('editor', 'admin', 'super-admin'),
+  async (req, res) => {
+    try {
+      const rows = await all(
+        `SELECT id, display_name, display_name_ar, email, role, profile_slug
+           FROM users
+          ORDER BY display_name COLLATE NOCASE`
+      );
+
+      const options = rows.map((row) => ({
+        id: row.id,
+        displayName: row.display_name || row.email || `User #${row.id}`,
+        displayNameAr: row.display_name_ar || null,
+        email: row.email || null,
+        role: row.role,
+        profileSlug: row.profile_slug || null,
+      }));
+
+      res.json(options);
+    } catch (error) {
+      console.error('Failed to fetch user options', error);
+      res.status(500).json({ error: 'Failed to fetch user options' });
+    }
+  }
+);
+
 router.post('/users', ensureAuthenticated, requireRole('super-admin'), async (req, res) => {
-  const { email, password, displayName, role } = req.body;
+  const { email, password, displayName, displayNameAr, role } = req.body;
 
   if (!email || !password || !displayName) {
     res.status(400).json({ error: 'Email, password, and display name are required' });
@@ -818,6 +1065,8 @@ router.post('/users', ensureAuthenticated, requireRole('super-admin'), async (re
   }
 
   const normalizedRole = isValidRole(role) ? role : 'admin';
+  const normalizedDisplayName = String(displayName).trim();
+  const normalizedDisplayNameAr = displayNameAr ? String(displayNameAr).trim() : normalizedDisplayName;
 
   try {
     const exists = await get('SELECT id FROM users WHERE email = ?', [email]);
@@ -828,13 +1077,13 @@ router.post('/users', ensureAuthenticated, requireRole('super-admin'), async (re
 
     const passwordHash = await bcrypt.hash(password, 12);
     await run(
-      `INSERT INTO users (email, password_hash, display_name, role, created_at, updated_at)
-       VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))`,
-      [email, passwordHash, displayName, normalizedRole]
+      `INSERT INTO users (email, password_hash, display_name, display_name_ar, role, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
+      [email, passwordHash, normalizedDisplayName, normalizedDisplayNameAr || null, normalizedRole]
     );
 
     const created = await get(
-      'SELECT id, email, display_name, role, created_at, updated_at FROM users WHERE email = ?',
+      'SELECT id, email, display_name, display_name_ar, role, created_at, updated_at FROM users WHERE email = ?',
       [email]
     );
 
@@ -852,7 +1101,7 @@ router.post('/users', ensureAuthenticated, requireRole('super-admin'), async (re
 
 router.put('/users/:id', ensureAuthenticated, requireRole('super-admin'), async (req, res) => {
   const { id } = req.params;
-  const { displayName, role, password } = req.body;
+  const { displayName, displayNameAr, role, password } = req.body;
 
   try {
     const target = await get('SELECT * FROM users WHERE id = ?', [id]);
@@ -881,10 +1130,18 @@ router.put('/users/:id', ensureAuthenticated, requireRole('super-admin'), async 
       }
     }
 
-    const nextDisplayName = displayName !== undefined ? displayName : target.display_name;
+    const nextDisplayName = displayName !== undefined ? String(displayName).trim() : target.display_name;
     if (!nextDisplayName) {
       res.status(400).json({ error: 'Display name cannot be empty' });
       return;
+    }
+
+    const displayNameArProvided = Object.prototype.hasOwnProperty.call(req.body, 'displayNameAr');
+    let nextDisplayNameAr = displayNameArProvided
+      ? String(displayNameAr || '').trim()
+      : target.display_name_ar;
+    if (displayNameArProvided && !nextDisplayNameAr) {
+      nextDisplayNameAr = null;
     }
 
     let nextPasswordHash = target.password_hash;
@@ -895,15 +1152,16 @@ router.put('/users/:id', ensureAuthenticated, requireRole('super-admin'), async 
     await run(
       `UPDATE users
           SET display_name = ?,
+              display_name_ar = ?,
               role = ?,
               password_hash = ?,
               updated_at = datetime('now')
         WHERE id = ?`,
-      [nextDisplayName, nextRole, nextPasswordHash, id]
+      [nextDisplayName, nextDisplayNameAr, nextRole, nextPasswordHash, id]
     );
 
     const updated = await get(
-      'SELECT id, email, display_name, role, created_at, updated_at FROM users WHERE id = ?',
+  'SELECT id, email, display_name, display_name_ar, role, created_at, updated_at FROM users WHERE id = ?',
       [id]
     );
 
@@ -916,6 +1174,7 @@ router.put('/users/:id', ensureAuthenticated, requireRole('super-admin'), async 
 
     if (Number(id) === req.session.user.id) {
       req.session.user.displayName = updated.display_name;
+      req.session.user.displayNameAr = updated.display_name_ar;
       req.session.user.role = updated.role;
     }
 
@@ -981,6 +1240,7 @@ router.get('/team-profiles', ensureAuthenticated, requireRole('super-admin'), as
       `SELECT id,
               email,
               display_name,
+        display_name_ar,
               avatar_url,
               profile_slug,
               profile_headline,
@@ -1134,6 +1394,7 @@ router.put('/team-profiles/:id', ensureAuthenticated, requireRole('super-admin')
   const { id } = req.params;
   const {
     displayName,
+    displayNameAr,
     avatarUrl,
     bio,
     badges,
@@ -1161,6 +1422,14 @@ router.put('/team-profiles/:id', ensureAuthenticated, requireRole('super-admin')
     if (!nextDisplayName) {
       res.status(400).json({ error: 'Display name cannot be empty' });
       return;
+    }
+
+    const displayNameArProvided = Object.prototype.hasOwnProperty.call(payload, 'displayNameAr');
+    let nextDisplayNameAr = displayNameArProvided
+      ? String(displayNameAr || '').trim()
+      : current.display_name_ar;
+    if (displayNameArProvided && !nextDisplayNameAr) {
+      nextDisplayNameAr = null;
     }
 
     let nextSlug = current.profile_slug;
@@ -1218,6 +1487,7 @@ router.put('/team-profiles/:id', ensureAuthenticated, requireRole('super-admin')
     await run(
       `UPDATE users
           SET display_name = ?,
+              display_name_ar = ?,
               avatar_url = ?,
               bio = ?,
               badges = ?,
@@ -1231,7 +1501,8 @@ router.put('/team-profiles/:id', ensureAuthenticated, requireRole('super-admin')
               updated_at = datetime('now')
         WHERE id = ?`,
       [
-        nextDisplayName,
+  nextDisplayName,
+  nextDisplayNameAr,
         nextAvatar,
         nextBio,
         nextBadges,
@@ -1253,6 +1524,7 @@ router.put('/team-profiles/:id', ensureAuthenticated, requireRole('super-admin')
       req.session.user = {
         ...req.session.user,
         displayName: profile.displayName,
+        displayNameAr: profile.displayNameAr,
         avatarUrl: profile.avatarUrl,
         bio: profile.bio,
         badges: profile.badges,
@@ -1603,11 +1875,12 @@ router.post('/articles', ensureAuthenticated, requireRole('editor', 'admin', 'su
       ]
     );
 
-    const createdArticle = await get('SELECT * FROM articles WHERE id = ?', [result.lastID]);
-    await recordActivity(req.session.user, 'create', 'article', createdArticle.id, {
+    const createdArticle = await loadArticleWithAuthor(result.lastID);
+    await recordActivity(req.session.user, 'create', 'article', result.lastID, {
       summary: `Created article "${createdArticle.title}"`,
       slug: createdArticle.slug,
-      published: Boolean(createdArticle.is_published),
+      published: Boolean(createdArticle.isPublished),
+      authorId: createdArticle.authorId,
     });
     res.status(201).json(createdArticle);
   } catch (error) {
@@ -1645,9 +1918,26 @@ router.put('/articles/:id', ensureAuthenticated, requireRole('editor', 'admin', 
       return;
     }
 
+    if (!canModifyContent(existing, req.session.user)) {
+      res.status(403).json({ error: 'You are not allowed to modify this article.' });
+      return;
+    }
+
     const publishedAtValue = published
       ? existing.published_at || timestamp
       : null;
+
+    let nextAuthorId = existing.author_id;
+    if (!nextAuthorId) {
+      nextAuthorId = req.session.user.id;
+    }
+
+    if (isSuperAdminUser(req.session.user) && Object.prototype.hasOwnProperty.call(req.body, 'authorId')) {
+      const requestedAuthorId = Number(req.body.authorId);
+      if (Number.isInteger(requestedAuthorId) && requestedAuthorId > 0) {
+        nextAuthorId = requestedAuthorId;
+      }
+    }
 
     await run(
       `UPDATE articles
@@ -1676,17 +1966,18 @@ router.put('/articles/:id', ensureAuthenticated, requireRole('editor', 'admin', 
         published ? 1 : 0,
         publishedAtValue,
         timestamp,
-        req.session.user.id,
+        nextAuthorId,
         id,
       ]
     );
 
-    const updatedArticle = await get('SELECT * FROM articles WHERE id = ?', [id]);
+    const updatedArticle = await loadArticleWithAuthor(id);
     const updatedFields = Object.keys(req.body || {});
     await recordActivity(req.session.user, 'update', 'article', id, {
       summary: `Updated article "${updatedArticle.title}"`,
       slug: updatedArticle.slug,
-      published: Boolean(updatedArticle.is_published),
+      published: Boolean(updatedArticle.isPublished),
+      authorId: updatedArticle.authorId,
       fields: updatedFields,
     });
     res.json(updatedArticle);
@@ -1710,6 +2001,11 @@ router.delete('/articles/:id', ensureAuthenticated, requireRole('editor', 'admin
       return;
     }
 
+    if (!canModifyContent(existing, req.session.user)) {
+      res.status(403).json({ error: 'You are not allowed to delete this article.' });
+      return;
+    }
+
     const result = await run('DELETE FROM articles WHERE id = ?', [id]);
 
     if (result.changes === 0) {
@@ -1721,6 +2017,7 @@ router.delete('/articles/:id', ensureAuthenticated, requireRole('editor', 'admin
       summary: `Deleted article "${existing.title}"`,
       slug: existing.slug,
       published: Boolean(existing.is_published),
+      authorId: existing.author_id,
     });
 
     res.json({ success: true });
@@ -1741,6 +2038,7 @@ router.post('/projects', ensureAuthenticated, requireRole('editor', 'admin', 'su
     videoUrl,
     galleryImages,
     isPublished,
+    collaboratorIds,
   } = req.body;
 
   if (!title || !slug) {
@@ -1750,6 +2048,7 @@ router.post('/projects', ensureAuthenticated, requireRole('editor', 'admin', 'su
 
   const published = parseBoolean(isPublished);
   const timestamp = new Date().toISOString();
+  const collaboratorIdList = sanitizeCollaboratorIds(collaboratorIds, req.session.user.id);
 
   try {
     const result = await run(
@@ -1772,11 +2071,15 @@ router.post('/projects', ensureAuthenticated, requireRole('editor', 'admin', 'su
       ]
     );
 
-    const createdProject = await get('SELECT * FROM projects WHERE id = ?', [result.lastID]);
-    await recordActivity(req.session.user, 'create', 'project', createdProject.id, {
+    await replaceProjectCollaborators(result.lastID, collaboratorIdList);
+    const createdProject = await loadProjectWithCollaborators(result.lastID);
+
+    await recordActivity(req.session.user, 'create', 'project', result.lastID, {
       summary: `Created project "${createdProject.title}"`,
       slug: createdProject.slug,
-      published: Boolean(createdProject.is_published),
+      published: Boolean(createdProject.isPublished),
+      authorId: createdProject.authorId,
+      collaboratorIds: createdProject.collaboratorIds,
     });
     res.status(201).json(createdProject);
   } catch (error) {
@@ -1801,6 +2104,8 @@ router.put('/projects/:id', ensureAuthenticated, requireRole('editor', 'admin', 
     videoUrl,
     galleryImages,
     isPublished,
+    collaboratorIds,
+    authorId,
   } = req.body;
 
   const published = parseBoolean(isPublished);
@@ -1814,9 +2119,28 @@ router.put('/projects/:id', ensureAuthenticated, requireRole('editor', 'admin', 
       return;
     }
 
+    if (!canModifyContent(existing, req.session.user)) {
+      res.status(403).json({ error: 'You are not allowed to modify this project.' });
+      return;
+    }
+
     const publishedAtValue = published
       ? existing.published_at || timestamp
       : null;
+
+    let nextAuthorId = existing.author_id;
+    if (!nextAuthorId) {
+      nextAuthorId = req.session.user.id;
+    }
+
+    if (isSuperAdminUser(req.session.user) && Object.prototype.hasOwnProperty.call(req.body, 'authorId')) {
+      const requestedAuthorId = Number(authorId);
+      if (Number.isInteger(requestedAuthorId) && requestedAuthorId > 0) {
+        nextAuthorId = requestedAuthorId;
+      }
+    }
+
+    const collaboratorIdList = sanitizeCollaboratorIds(collaboratorIds, nextAuthorId);
 
     await run(
       `UPDATE projects
@@ -1845,17 +2169,20 @@ router.put('/projects/:id', ensureAuthenticated, requireRole('editor', 'admin', 
         published ? 1 : 0,
         publishedAtValue,
         timestamp,
-        req.session.user.id,
+        nextAuthorId,
         id,
       ]
     );
 
-    const updatedProject = await get('SELECT * FROM projects WHERE id = ?', [id]);
+    await replaceProjectCollaborators(id, collaboratorIdList);
+    const updatedProject = await loadProjectWithCollaborators(id);
     const updatedFields = Object.keys(req.body || {});
     await recordActivity(req.session.user, 'update', 'project', id, {
       summary: `Updated project "${updatedProject.title}"`,
       slug: updatedProject.slug,
-      published: Boolean(updatedProject.is_published),
+      published: Boolean(updatedProject.isPublished),
+      authorId: updatedProject.authorId,
+      collaboratorIds: updatedProject.collaboratorIds,
       fields: updatedFields,
     });
     res.json(updatedProject);
@@ -1879,6 +2206,11 @@ router.delete('/projects/:id', ensureAuthenticated, requireRole('editor', 'admin
       return;
     }
 
+    if (!canModifyContent(existing, req.session.user)) {
+      res.status(403).json({ error: 'You are not allowed to delete this project.' });
+      return;
+    }
+
     const result = await run('DELETE FROM projects WHERE id = ?', [id]);
 
     if (result.changes === 0) {
@@ -1890,6 +2222,7 @@ router.delete('/projects/:id', ensureAuthenticated, requireRole('editor', 'admin
       summary: `Deleted project "${existing.title}"`,
       slug: existing.slug,
       published: Boolean(existing.is_published),
+      authorId: existing.author_id,
     });
 
     res.json({ success: true });

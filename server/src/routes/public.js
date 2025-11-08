@@ -64,6 +64,47 @@ const parseListField = (value) => {
   return [];
 };
 
+const parseJsonArrayField = (value) => {
+  if (!value) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value;
+  }
+  try {
+    return JSON.parse(value) || [];
+  } catch (error) {
+    return [];
+  }
+};
+
+const normalizeCollaborators = (value) => {
+  const entries = parseJsonArrayField(value);
+  if (!Array.isArray(entries)) {
+    return [];
+  }
+
+  return entries
+    .map((entry) => {
+      if (!entry || typeof entry !== 'object') {
+        return null;
+      }
+      const id = Number(entry.id);
+      if (!Number.isFinite(id)) {
+        return null;
+      }
+      return {
+        id,
+        displayName: entry.displayName || entry.display_name || entry.email || `User #${id}`,
+        displayNameAr: entry.displayNameAr || entry.display_name_ar || null,
+        email: entry.email || null,
+        role: entry.role || null,
+        profileSlug: entry.profileSlug || entry.profile_slug || null,
+      };
+    })
+    .filter(Boolean);
+};
+
 const normalizeMediaFields = (row) => {
   if (!row || typeof row !== 'object') {
     return row;
@@ -71,12 +112,16 @@ const normalizeMediaFields = (row) => {
   const normalized = { ...row };
   normalized.videoUrl = row.videoUrl ? String(row.videoUrl).trim() : '';
   normalized.galleryImages = parseListField(row.galleryImages);
+  normalized.collaborators = normalizeCollaborators(row.collaborators);
+  normalized.authorName = row.authorName || row.author_name || null;
+  normalized.authorNameAr = row.authorNameAr || row.author_name_ar || null;
   return normalized;
 };
 
 const sanitizeTeamProfile = (row) => ({
   id: row.id,
   displayName: row.display_name,
+  displayNameAr: row.display_name_ar,
   profileSlug: row.profile_slug,
   profileHeadline: row.profile_headline ? String(row.profile_headline).trim() : '',
   avatarUrl: row.avatar_url ? String(row.avatar_url).trim() : '',
@@ -89,6 +134,61 @@ const sanitizeTeamProfile = (row) => ({
   updatedAt: row.updated_at,
 });
 
+const sanitizeArticleSummary = (row) => {
+  if (!row) {
+    return null;
+  }
+
+  const fallbackDetail = row.detail_url
+    ? String(row.detail_url).trim()
+    : row.slug
+    ? `../Articles/detail.html?slug=${encodeURIComponent(row.slug)}`
+    : null;
+
+  return {
+    id: row.id,
+    title: row.title,
+    slug: row.slug,
+    summary: row.summary ? String(row.summary).trim() : '',
+    detailUrl: fallbackDetail,
+    coverImage: row.cover_image ? String(row.cover_image).trim() : '',
+    publishedAt: row.published_at,
+    createdAt: row.created_at,
+  };
+};
+
+const parseActivityDetails = (value) => {
+  if (!value) {
+    return null;
+  }
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    return null;
+  }
+};
+
+const describeActivity = (row) => {
+  const details = parseActivityDetails(row.details);
+  if (details && typeof details.summary === 'string' && details.summary.trim()) {
+    return details.summary.trim();
+  }
+  if (details && typeof details.message === 'string' && details.message.trim()) {
+    return details.message.trim();
+  }
+  const resourceLabel = row.resource ? row.resource.replace(/_/g, ' ') : 'resource';
+  return `Performed ${row.action} on ${resourceLabel}`;
+};
+
+const sanitizeActivityEntry = (row) => ({
+  id: row.id,
+  action: row.action,
+  resource: row.resource,
+  resourceId: row.resource_id,
+  summary: describeActivity(row),
+  createdAt: row.created_at,
+});
+
 router.get('/projects', async (req, res) => {
   const { includeDrafts, authorId, authorSlug } = req.query;
   const clauses = [];
@@ -99,33 +199,87 @@ router.get('/projects', async (req, res) => {
   }
 
   if (authorId) {
-    clauses.push('projects.author_id = ?');
-    params.push(authorId);
+    clauses.push(`(
+      projects.author_id = ?
+      OR EXISTS (
+        SELECT 1
+          FROM project_collaborators AS pc
+         WHERE pc.project_id = projects.id
+           AND pc.user_id = ?
+      )
+    )`);
+    params.push(authorId, authorId);
   }
 
   if (authorSlug) {
-    clauses.push(
-      `projects.author_id IN (
+    clauses.push(`(
+      projects.author_id IN (
         SELECT id FROM users
          WHERE (profile_slug IS NOT NULL AND LOWER(profile_slug) = LOWER(?))
             OR LOWER(email) = LOWER(?)
-      )`
-    );
-    params.push(authorSlug, authorSlug);
+      )
+      OR EXISTS (
+        SELECT 1
+          FROM project_collaborators AS pc
+          JOIN users AS collaborator ON collaborator.id = pc.user_id
+         WHERE pc.project_id = projects.id
+           AND (
+                 (collaborator.profile_slug IS NOT NULL AND LOWER(collaborator.profile_slug) = LOWER(?))
+              OR LOWER(collaborator.email) = LOWER(?)
+           )
+      )
+    )`);
+    params.push(authorSlug, authorSlug, authorSlug, authorSlug);
   }
 
   const whereClause = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
 
   try {
     const projects = await all(
-      `SELECT id, title, summary, content, slug, cover_image AS coverImage, detail_url AS detailUrl,
-        video_url AS videoUrl, gallery_images AS galleryImages,
-        is_published AS isPublished, published_at AS publishedAt, created_at AS createdAt,
-        updated_at AS updatedAt, author_id AS authorId,
-        (SELECT display_name FROM users WHERE users.id = projects.author_id) AS authorName
+      `SELECT projects.id,
+              projects.title,
+              projects.summary,
+              projects.content,
+              projects.slug,
+              projects.cover_image AS coverImage,
+              projects.detail_url AS detailUrl,
+              projects.video_url AS videoUrl,
+              projects.gallery_images AS galleryImages,
+              projects.is_published AS isPublished,
+              projects.published_at AS publishedAt,
+              projects.created_at AS createdAt,
+              projects.updated_at AS updatedAt,
+              projects.author_id AS authorId,
+              (SELECT display_name FROM users WHERE users.id = projects.author_id) AS authorName,
+              (SELECT display_name_ar FROM users WHERE users.id = projects.author_id) AS authorNameAr,
+              (
+                SELECT json_group_array(
+                         json_object(
+                           'id', collaborator.id,
+                           'displayName', collaborator.display_name,
+                           'displayNameAr', collaborator.display_name_ar,
+                           'email', collaborator.email,
+                           'role', collaborator.role,
+                           'profileSlug', collaborator.profile_slug
+                         )
+                       )
+                  FROM (
+                         SELECT users.id,
+                                users.display_name,
+                                users.display_name_ar,
+                                users.email,
+                                users.role,
+                                users.profile_slug,
+                                COALESCE(pc.sort_order, 999) AS sort_order
+                           FROM project_collaborators AS pc
+                           JOIN users ON users.id = pc.user_id
+                          WHERE pc.project_id = projects.id
+                          ORDER BY sort_order, users.display_name COLLATE NOCASE
+                       ) AS collaborator
+              ) AS collaborators
          FROM projects
          ${whereClause}
-         ORDER BY COALESCE(published_at, created_at) DESC`,
+         ORDER BY COALESCE(projects.published_at, projects.created_at) DESC`,
       params
     );
     const normalized = projects.map((project) => normalizeMediaFields(project));
@@ -142,13 +296,49 @@ router.get('/projects/:slug', async (req, res) => {
 
   try {
     const project = await get(
-      `SELECT id, title, summary, content, slug, cover_image AS coverImage, detail_url AS detailUrl,
-        video_url AS videoUrl, gallery_images AS galleryImages,
-        is_published AS isPublished, published_at AS publishedAt, created_at AS createdAt,
-        updated_at AS updatedAt, author_id AS authorId,
-        (SELECT display_name FROM users WHERE users.id = projects.author_id) AS authorName
+      `SELECT projects.id,
+              projects.title,
+              projects.summary,
+              projects.content,
+              projects.slug,
+              projects.cover_image AS coverImage,
+              projects.detail_url AS detailUrl,
+              projects.video_url AS videoUrl,
+              projects.gallery_images AS galleryImages,
+              projects.is_published AS isPublished,
+              projects.published_at AS publishedAt,
+              projects.created_at AS createdAt,
+              projects.updated_at AS updatedAt,
+              projects.author_id AS authorId,
+              (SELECT display_name FROM users WHERE users.id = projects.author_id) AS authorName,
+              (SELECT display_name_ar FROM users WHERE users.id = projects.author_id) AS authorNameAr,
+              (
+                SELECT json_group_array(
+                         json_object(
+                           'id', collaborator.id,
+                           'displayName', collaborator.display_name,
+                           'displayNameAr', collaborator.display_name_ar,
+                           'email', collaborator.email,
+                           'role', collaborator.role,
+                           'profileSlug', collaborator.profile_slug
+                         )
+                       )
+                  FROM (
+                         SELECT users.id,
+                                users.display_name,
+                                users.display_name_ar,
+                                users.email,
+                                users.role,
+                                users.profile_slug,
+                                COALESCE(pc.sort_order, 999) AS sort_order
+                           FROM project_collaborators AS pc
+                           JOIN users ON users.id = pc.user_id
+                          WHERE pc.project_id = projects.id
+                          ORDER BY sort_order, users.display_name COLLATE NOCASE
+                       ) AS collaborator
+              ) AS collaborators
          FROM projects
-        WHERE slug = ?`,
+        WHERE projects.slug = ?`,
       [slug]
     );
 
@@ -165,8 +355,29 @@ router.get('/projects/:slug', async (req, res) => {
 });
 
 router.get('/articles', async (req, res) => {
-  const { includeDrafts } = req.query;
-  const isPublishedClause = includeDrafts === 'true' ? '' : 'WHERE is_published = 1';
+  const { includeDrafts, authorId, authorSlug } = req.query;
+  const clauses = [];
+  const params = [];
+
+  if (includeDrafts !== 'true') {
+    clauses.push('articles.is_published = 1');
+  }
+
+  if (authorId) {
+    clauses.push('articles.author_id = ?');
+    params.push(authorId);
+  }
+
+  if (authorSlug) {
+    clauses.push(`articles.author_id IN (
+      SELECT id FROM users
+       WHERE (profile_slug IS NOT NULL AND LOWER(profile_slug) = LOWER(?))
+          OR LOWER(email) = LOWER(?)
+    )`);
+    params.push(authorSlug, authorSlug);
+  }
+
+  const whereClause = clauses.length ? `WHERE ${clauses.join(' AND ')}` : '';
 
   try {
     const articles = await all(
@@ -174,9 +385,12 @@ router.get('/articles', async (req, res) => {
         video_url AS videoUrl, gallery_images AS galleryImages,
         is_published AS isPublished, published_at AS publishedAt, created_at AS createdAt,
         updated_at AS updatedAt, author_id AS authorId,
-        (SELECT display_name FROM users WHERE users.id = articles.author_id) AS authorName
-         FROM articles ${isPublishedClause}
-         ORDER BY COALESCE(published_at, created_at) DESC`
+        (SELECT display_name FROM users WHERE users.id = articles.author_id) AS authorName,
+        (SELECT display_name_ar FROM users WHERE users.id = articles.author_id) AS authorNameAr
+         FROM articles
+         ${whereClause}
+         ORDER BY COALESCE(published_at, created_at) DESC`,
+      params
     );
 
     const normalized = articles.map((article) => normalizeMediaFields(article));
@@ -197,7 +411,8 @@ router.get('/articles/:slug', async (req, res) => {
         video_url AS videoUrl, gallery_images AS galleryImages,
         is_published AS isPublished, published_at AS publishedAt, created_at AS createdAt,
         updated_at AS updatedAt, author_id AS authorId,
-        (SELECT display_name FROM users WHERE users.id = articles.author_id) AS authorName
+        (SELECT display_name FROM users WHERE users.id = articles.author_id) AS authorName,
+        (SELECT display_name_ar FROM users WHERE users.id = articles.author_id) AS authorNameAr
          FROM articles
         WHERE slug = ?`,
       [slug]
@@ -498,6 +713,7 @@ router.get('/team', async (req, res) => {
     const rows = await all(
       `SELECT id,
               display_name,
+        display_name_ar,
               profile_slug,
               profile_headline,
               avatar_url,
@@ -534,6 +750,7 @@ router.get('/team/:slug', async (req, res) => {
     const row = await get(
       `SELECT id,
               display_name,
+              display_name_ar,
               profile_slug,
               profile_headline,
               avatar_url,
@@ -556,7 +773,43 @@ router.get('/team/:slug', async (req, res) => {
       return;
     }
 
-    res.json(sanitizeTeamProfile(row));
+    const [articles, activities] = await Promise.all([
+      all(
+        `SELECT id,
+                title,
+                summary,
+                slug,
+                cover_image,
+                detail_url,
+                published_at,
+                created_at
+           FROM articles
+          WHERE author_id = ?
+            AND is_published = 1
+          ORDER BY COALESCE(published_at, created_at) DESC
+          LIMIT 20`,
+        [row.id]
+      ),
+      all(
+        `SELECT id,
+                action,
+                resource,
+                resource_id,
+                details,
+                created_at
+           FROM activity_logs
+          WHERE user_id = ?
+          ORDER BY datetime(created_at) DESC
+          LIMIT 20`,
+        [row.id]
+      ),
+    ]);
+
+    const profile = sanitizeTeamProfile(row);
+    profile.articles = articles.map(sanitizeArticleSummary).filter(Boolean);
+    profile.activities = activities.map(sanitizeActivityEntry).filter(Boolean);
+
+    res.json(profile);
   } catch (error) {
     console.error('Failed to fetch team profile', error);
     res.status(500).json({ error: 'Failed to fetch team profile' });

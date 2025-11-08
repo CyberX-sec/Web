@@ -105,6 +105,13 @@
                   </label>
                   <label class="field">
                     <span>
+                      <span class="label-main">Display Name (Arabic)</span>
+                      <span class="translation" dir="rtl" lang="ar">الاسم المعروض بالعربية</span>
+                    </span>
+                    <input type="text" name="displayNameAr" placeholder="اسم العرض بالعربية">
+                  </label>
+                  <label class="field">
+                    <span>
                       <span class="label-main">Avatar URL</span>
                       <span class="translation" dir="rtl" lang="ar">رابط الصورة الشخصية</span>
                     </span>
@@ -319,6 +326,21 @@
                   </span>
                   <textarea name="content" rows="6"></textarea>
                 </label>
+                <label class="field">
+                  <span>
+                    <span class="label-main">Collaborators</span>
+                    <small>Select teammates to credit on this project (hold Ctrl or Cmd for multiple)</small>
+                    <span class="translation" dir="rtl" lang="ar">الأعضاء المشاركون</span>
+                    <small class="translation" dir="rtl" lang="ar">اختر الأعضاء المشاركين في المشروع (استمر بالضغط على Ctrl لاختيار أكثر من اسم)</small>
+                  </span>
+                  <select name="collaboratorIds" multiple data-project-collaborators size="6">
+                    <option value="" disabled>جاري تحميل الأعضاء…</option>
+                  </select>
+                  <p class="meta" data-project-collaborators-hint>
+                    Authors are added automatically. Select only additional teammates to credit.
+                    <span class="translation" dir="rtl" lang="ar">يتم إضافة مالك المشروع تلقائياً. اختر فقط الأعضاء المشاركين الإضافيين.</span>
+                  </p>
+                </label>
                 <div class="grid">
                   <label class="field">
                     <span>
@@ -409,6 +431,13 @@
                       <span class="translation" dir="rtl" lang="ar">المعرّف</span>
                     </span>
                     <input type="text" name="slug" required placeholder="article-slug">
+                  </label>
+                  <label class="field">
+                    <span>
+                      <span class="label-main">Display Name (Arabic)</span>
+                      <span class="translation" dir="rtl" lang="ar">الاسم المعروض بالعربية</span>
+                    </span>
+                    <input type="text" name="displayNameAr" placeholder="اسم المستخدم بالعربية">
                   </label>
                 </div>
                 <label class="field">
