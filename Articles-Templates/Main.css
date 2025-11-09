@@ -111,6 +111,7 @@ header {
 .article-card p {
   font-size: 1rem;
   color: #c9c9c9;
+  white-space: pre-line;
 }
 
 .article-card img {
@@ -219,6 +220,13 @@ footer {
 
 :lang(en) {
   font-family: 'Cinzel', serif;
+  direction: ltr;
+  text-align: left;
+  unicode-bidi: isolate;
+}
+
+body :lang(en) {
+  display: inline-block;
 }
 
 #loader {

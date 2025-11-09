@@ -105,11 +105,58 @@ const normalizeCollaborators = (value) => {
     .filter(Boolean);
 };
 
-const normalizeMediaFields = (row) => {
+const ABSOLUTE_HREF_PATTERN = /^(?:[a-z][a-z0-9+.-]*:)?\/\//i;
+
+const isAbsoluteHref = (value) => ABSOLUTE_HREF_PATTERN.test(value);
+
+const normalizeInternalHref = (value) => {
+  if (!value) {
+    return null;
+  }
+
+  const trimmed = String(value).trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  if (isAbsoluteHref(trimmed) || trimmed.startsWith('mailto:') || trimmed.startsWith('tel:')) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith('/') || trimmed.startsWith('../') || trimmed.startsWith('./')) {
+    return trimmed;
+  }
+
+  return `/${trimmed.replace(/^\/+/u, '')}`;
+};
+
+const resolveDetailUrl = (type, row) => {
+  const raw = row.detailUrl || row.detail_url || null;
+  const normalized = normalizeInternalHref(raw);
+  if (normalized) {
+    return normalized;
+  }
+
+  if (!row.slug) {
+    return null;
+  }
+
+  if (type === 'project') {
+    return `/Projects/detail.html?slug=${encodeURIComponent(row.slug)}`;
+  }
+  if (type === 'article') {
+    return `/Articles/detail.html?slug=${encodeURIComponent(row.slug)}`;
+  }
+
+  return null;
+};
+
+const normalizeMediaFields = (row, { type } = {}) => {
   if (!row || typeof row !== 'object') {
     return row;
   }
   const normalized = { ...row };
+  normalized.detailUrl = resolveDetailUrl(type, row);
   normalized.videoUrl = row.videoUrl ? String(row.videoUrl).trim() : '';
   normalized.galleryImages = parseListField(row.galleryImages);
   normalized.collaborators = normalizeCollaborators(row.collaborators);
@@ -282,7 +329,7 @@ router.get('/projects', async (req, res) => {
          ORDER BY COALESCE(projects.published_at, projects.created_at) DESC`,
       params
     );
-    const normalized = projects.map((project) => normalizeMediaFields(project));
+  const normalized = projects.map((project) => normalizeMediaFields(project, { type: 'project' }));
 
     res.json(normalized);
   } catch (error) {
@@ -347,7 +394,7 @@ router.get('/projects/:slug', async (req, res) => {
       return;
     }
 
-    res.json(normalizeMediaFields(project));
+  res.json(normalizeMediaFields(project, { type: 'project' }));
   } catch (error) {
     console.error('Failed to fetch project', error);
     res.status(500).json({ error: 'Failed to fetch project' });
@@ -393,7 +440,7 @@ router.get('/articles', async (req, res) => {
       params
     );
 
-    const normalized = articles.map((article) => normalizeMediaFields(article));
+  const normalized = articles.map((article) => normalizeMediaFields(article, { type: 'article' }));
 
     res.json(normalized);
   } catch (error) {
@@ -423,7 +470,7 @@ router.get('/articles/:slug', async (req, res) => {
       return;
     }
 
-    res.json(normalizeMediaFields(article));
+  res.json(normalizeMediaFields(article, { type: 'article' }));
   } catch (error) {
     console.error('Failed to fetch article', error);
     res.status(500).json({ error: 'Failed to fetch article' });
