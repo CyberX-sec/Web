@@ -49,9 +49,14 @@ app.get('/api/health', (req, res) => {
 app.use('/api', publicRoutes);
 app.use('/api/admin', adminRoutes);
 
-const publicPath = process.env.PUBLIC_ROOT
+let publicPath = process.env.PUBLIC_ROOT
   ? path.resolve(process.env.PUBLIC_ROOT)
   : path.resolve(__dirname, '..', '..');
+
+if (!fs.existsSync(publicPath)) {
+  console.warn(`Configured PUBLIC_ROOT not found at ${publicPath}. Falling back to repository root.`);
+  publicPath = path.resolve(__dirname, '..', '..');
+}
 
 const mediaRoot = process.env.MEDIA_ROOT
   ? path.resolve(process.env.MEDIA_ROOT)
