@@ -111,6 +111,7 @@ header {
 .article-card p {
   font-size: 1rem;
   color: #c9c9c9;
+  white-space: pre-line;
 }
 
 .article-card img {

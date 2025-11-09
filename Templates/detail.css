@@ -390,6 +390,7 @@ body[data-direction="rtl"] .detail-meta {
   font-size: 1.08rem;
   line-height: 1.95;
   text-align: left;
+  white-space: pre-line;
   box-shadow: 0 32px 60px rgba(0, 0, 0, 0.5);
 }
 
