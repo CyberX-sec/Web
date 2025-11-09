@@ -18,11 +18,30 @@
     if (!value) {
       return '';
     }
-    const withoutHtml = String(value).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
-    if (!maxLength || withoutHtml.length <= maxLength) {
-      return withoutHtml;
+    const normalized = String(value)
+      .replace(/\r\n/g, '\n')
+      .replace(/<\s*br\s*\/?\s*>/gi, '\n')
+      .replace(/<\s*\/p\s*>/gi, '\n\n')
+      .replace(/<\s*p[^>]*>/gi, '')
+      .replace(/<\s*\/div\s*>/gi, '\n')
+      .replace(/<\s*div[^>]*>/gi, '')
+      .replace(/<[^>]*>/g, '')
+      .replace(/[ \t]+\n/g, '\n')
+      .replace(/ {2,}/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+
+    if (!maxLength || normalized.length <= maxLength) {
+      return normalized;
     }
-    return `${withoutHtml.slice(0, maxLength).trim()}…`;
+
+    let truncated = normalized.slice(0, maxLength).trimEnd();
+    const lastNewline = truncated.lastIndexOf('\n');
+    if (lastNewline !== -1 && maxLength - lastNewline < 40) {
+      truncated = truncated.slice(0, lastNewline).trimEnd();
+    }
+
+    return `${truncated}…`;
   }
 
   function isExternal(url) {

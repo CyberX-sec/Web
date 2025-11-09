@@ -440,6 +440,16 @@
 
     select.innerHTML = '';
 
+    if (!canSelectCollaborators()) {
+      select.disabled = true;
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.disabled = true;
+      placeholder.textContent = 'صلاحياتك الحالية لا تسمح باختيار المساهمين.';
+      select.appendChild(placeholder);
+      return;
+    }
+
     const currentUserId = state.user && state.user.id ? String(state.user.id) : null;
 
     options.forEach((entry) => {
@@ -1283,6 +1293,8 @@
 
   const isSuperAdmin = () => state.user && state.user.role === 'super-admin';
   const isAdmin = () => state.user && (state.user.role === 'admin' || state.user.role === 'super-admin');
+  const canSelectCollaborators = () =>
+    state.user && ['editor', 'admin', 'super-admin'].includes(state.user.role);
 
   const hasRequiredRole = (requiredRole) => {
     if (!requiredRole) {
@@ -2059,8 +2071,9 @@
   }
 
   async function loadUserOptions() {
-    if (!isAdmin()) {
+    if (!canSelectCollaborators()) {
       state.userOptions = [];
+      populateCollaboratorSelect();
       return;
     }
 
